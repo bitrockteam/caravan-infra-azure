@@ -48,3 +48,31 @@ variable "worker_plane_size" {
   type    = string
   default = "Standard_F2"
 }
+variable "dc_name" {
+  type    = string
+  default = "azure-dc"
+  validation {
+    condition     = can(regex("^([a-z0-9]+(-[a-z0-9]+)*)+$", var.dc_name))
+    error_message = "Invalid dc_name. Must contain letters, numbers and hyphen."
+  }
+}
+variable "ca_certs" {
+  type = map(object({
+    filename = string
+    pemurl   = string
+  }))
+  default = {
+    fakeleintermediatex1 = {
+      filename = "fakeleintermediatex1.pem"
+      pemurl   = "https://letsencrypt.org/certs/fakeleintermediatex1.pem"
+    },
+    fakelerootx1 = {
+      filename = "fakelerootx1.pem"
+      pemurl   = "https://letsencrypt.org/certs/fakelerootx1.pem"
+    }
+  }
+}
+variable "azure_csi" {
+  type    = bool
+  default = true
+}
