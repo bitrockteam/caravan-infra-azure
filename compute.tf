@@ -79,8 +79,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   network_interface {
     name = "${var.prefix}-worker-plane"
     ip_configuration {
-      name      = "internal"
-      subnet_id = azurerm_subnet.subnet.id
+      name                           = "internal"
+      subnet_id                      = azurerm_subnet.subnet.id
+      application_security_group_ids = [azurerm_application_security_group.worker_plane.id]
     }
   }
 
