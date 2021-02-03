@@ -1,3 +1,4 @@
+/*
 module "hashicorp-bootstrap" {
   source                         = "git::ssh://git@github.com/bitrockteam/hashicorp-terraform-bootstrap?ref=main"
   ssh_private_key                = chomp(tls_private_key.ssh_key.private_key_pem)
@@ -20,3 +21,4 @@ module "hashicorp-bootstrap" {
   azure_vault_name = azurerm_key_vault.key_vault.name
   azure_key_name   = azurerm_key_vault_key.key.name
 }
+*/

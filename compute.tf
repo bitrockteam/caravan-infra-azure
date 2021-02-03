@@ -1,12 +1,16 @@
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
-  rsa_bits  = "4096"
+  rsa_bits  = "2048"
 }
 
 resource "local_file" "ssh_key" {
   sensitive_content = chomp(tls_private_key.ssh_key.private_key_pem)
   filename          = "${path.module}/ssh-key"
   file_permission   = "0600"
+}
+
+locals {
+  control_plane_nic_config_name = "internal"
 }
 
 resource "azurerm_network_interface" "control_plane" {
@@ -16,9 +20,9 @@ resource "azurerm_network_interface" "control_plane" {
   resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = local.control_plane_nic_config_name
     subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Static"
+    private_ip_address_allocation = "Dynamic"
   }
 }
 
@@ -28,12 +32,22 @@ resource "azurerm_network_interface_application_security_group_association" "con
   network_interface_id          = azurerm_network_interface.control_plane[count.index].id
 }
 
+resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "control_plane" {
+  depends_on = [azurerm_application_gateway.this]
+  count      = var.control_plane_instance_count
+
+  //backend_address_pool_id = local.ag_bp_control_plane
+  backend_address_pool_id = azurerm_application_gateway.this.backend_address_pool[0].id
+  ip_configuration_name   = local.control_plane_nic_config_name
+  network_interface_id    = azurerm_network_interface.control_plane[count.index].id
+}
+
 resource "azurerm_linux_virtual_machine" "control_plane" {
   count = var.control_plane_instance_count
 
   admin_username = "centos"
   admin_ssh_key {
-    public_key = tls_private_key.ssh_key.public_key_pem
+    public_key = tls_private_key.ssh_key.public_key_openssh
     username   = "centos"
   }
 
@@ -66,7 +80,7 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
 resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   admin_username = "centos"
   admin_ssh_key {
-    public_key = tls_private_key.ssh_key.public_key_pem
+    public_key = tls_private_key.ssh_key.public_key_openssh
     username   = "centos"
   }
 
@@ -79,9 +93,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   network_interface {
     name = "${var.prefix}-worker-plane"
     ip_configuration {
-      name                           = "internal"
-      subnet_id                      = azurerm_subnet.subnet.id
-      application_security_group_ids = [azurerm_application_security_group.worker_plane.id]
+      name                                         = "internal"
+      subnet_id                                    = azurerm_subnet.subnet.id
+      application_security_group_ids               = [azurerm_application_security_group.worker_plane.id]
+      application_gateway_backend_address_pool_ids = [local.ag_bp_worker_plane]
     }
   }
 

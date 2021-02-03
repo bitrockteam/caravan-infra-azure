@@ -2,6 +2,7 @@ locals {
   control_plane_role_name = "control-plane"
   worker_plane_role_name  = "worker-plane"
 }
+/*
 
 module "cloud_init_control_plane" {
   source          = "git::ssh://git@github.com/bitrockteam/hashicorp-terraform-cloudinit"
@@ -21,4 +22,4 @@ module "cloud_init_worker_plane" {
   auto_auth_type  = "azure"
   azure_node_role = local.worker_plane_role_name
   //TODO: azure stuff
-}
+}*/

@@ -26,6 +26,10 @@ variable "subnet_cidr" {
   type    = string
   default = "10.0.1.0/24"
 }
+variable "app_gateway_subnet_cidr" {
+  type    = string
+  default = "10.0.2.0/24"
+}
 variable "allowed_ssh_cidrs" {
   type    = list(string)
   default = ["0.0.0.0/0"]
@@ -78,4 +82,8 @@ variable "ca_certs" {
 variable "azure_csi" {
   type    = bool
   default = true
+}
+variable "external_domain" {
+  type    = string
+  default = ""
 }
