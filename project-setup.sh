@@ -34,7 +34,8 @@ terraform {
 EOT
 
 cat <<EOT > azure.tfvars
-resource_group_name = "${RESOURCE_GROUP}"
-prefix              = "${NAME}
-location            = "${LOCATION}"
+resource_group_name  = "${RESOURCE_GROUP}"
+storage_account_name = "${STORAGE_ACCOUNT}"
+prefix               = "${NAME}
+location             = "${LOCATION}"
 EOT
