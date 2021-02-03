@@ -36,4 +36,5 @@ EOT
 cat <<EOT > azure.tfvars
 resource_group_name = "${RESOURCE_GROUP}"
 prefix              = "${NAME}
+location            = "${LOCATION}"
 EOT
