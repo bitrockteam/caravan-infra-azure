@@ -56,6 +56,7 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
   network_interface_ids = [azurerm_network_interface.control_plane[count.index].id]
   resource_group_name   = var.resource_group_name
   size                  = var.control_plane_size
+  custom_data           = module.cloud_init_control_plane.control_plane_user_data
 
   os_disk {
     caching              = "None"
@@ -89,6 +90,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   name                = "${var.prefix}-worker-plane"
   resource_group_name = var.resource_group_name
   sku                 = var.worker_plane_size
+  custom_data         = module.cloud_init_worker_plane.worker_plane_user_data
 
   network_interface {
     name = "${var.prefix}-worker-plane"

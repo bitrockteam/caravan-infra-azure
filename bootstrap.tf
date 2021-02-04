@@ -1,4 +1,3 @@
-/*
 module "hashicorp-bootstrap" {
   source                         = "git::ssh://git@github.com/bitrockteam/hashicorp-terraform-bootstrap?ref=main"
   ssh_private_key                = chomp(tls_private_key.ssh_key.private_key_pem)
@@ -16,9 +15,9 @@ module "hashicorp-bootstrap" {
   unseal_type          = "azure"
   agent_auto_auth_type = "azure"
 
-  //TODO azure_...
   azure_tenant_id  = data.azurerm_client_config.this.tenant_id
   azure_vault_name = azurerm_key_vault.key_vault.name
   azure_key_name   = azurerm_key_vault_key.key.name
+  azure_resource   = "https://management.azure.com/"
+  azure_node_role  = local.control_plane_role_name
 }
-*/
