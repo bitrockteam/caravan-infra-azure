@@ -1,3 +1,17 @@
+// AUTH
+variable "subscription_id" {
+  type = string
+}
+variable "tenant_id" {
+  type = string
+}
+variable "client_id" {
+  type = string
+}
+variable "client_secret" {
+  type = string
+}
+
 variable "resource_group_name" {
   type = string
 }
@@ -86,4 +100,10 @@ variable "azure_csi" {
 variable "external_domain" {
   type    = string
   default = ""
+}
+variable "parent_resource_group_name" {
+  type = string
+}
+variable "use_le_staging" {
+  type = bool
 }
