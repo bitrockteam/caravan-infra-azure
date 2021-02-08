@@ -99,7 +99,6 @@ variable "azure_csi" {
 }
 variable "external_domain" {
   type    = string
-  default = ""
 }
 variable "parent_resource_group_name" {
   type = string

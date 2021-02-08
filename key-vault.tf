@@ -13,6 +13,25 @@ resource "azurerm_key_vault" "key_vault" {
   }
 }
 
+resource "azurerm_key_vault_access_policy" "self" {
+  key_vault_id = azurerm_key_vault.key_vault.id
+  object_id    = data.azurerm_client_config.this.object_id
+  tenant_id    = var.tenant_id
+
+  key_permissions = [
+    "backup",
+    "create",
+    "delete",
+    "get",
+    "import",
+    "list",
+    "purge",
+    "recover",
+    "restore",
+    "update"
+  ]
+}
+
 resource "azurerm_key_vault_access_policy" "control_plane" {
   key_vault_id = azurerm_key_vault.key_vault.id
   object_id    = azurerm_user_assigned_identity.control_plane.principal_id
@@ -26,6 +45,8 @@ resource "azurerm_key_vault_access_policy" "control_plane" {
 }
 
 resource "azurerm_key_vault_key" "key" {
+  depends_on = [azurerm_key_vault_access_policy.self]
+
   name         = "${var.prefix}-vault-unseal-key"
   key_vault_id = azurerm_key_vault.key_vault.id
   key_type     = "RSA"
@@ -34,4 +55,6 @@ resource "azurerm_key_vault_key" "key" {
     "wrapKey",
     "unwrapKey",
   ]
+
+  tags = var.tags
 }

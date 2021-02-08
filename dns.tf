@@ -11,7 +11,7 @@ resource "azurerm_dns_zone" "this" {
 }
 
 resource "azurerm_dns_ns_record" "this" {
-  name                = "${var.prefix}.${var.external_domain}"
+  name                = var.prefix
   records             = azurerm_dns_zone.this.name_servers
   resource_group_name = var.parent_resource_group_name
   ttl                 = 30

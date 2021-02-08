@@ -24,6 +24,8 @@ resource "azurerm_network_interface" "control_plane" {
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
   }
+
+  tags = var.tags
 }
 
 resource "azurerm_network_interface_application_security_group_association" "control_plane" {
@@ -94,11 +96,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
 
   network_interface {
     name = "${var.prefix}-worker-plane"
+    primary = true
     ip_configuration {
       name                                         = "internal"
       subnet_id                                    = azurerm_subnet.subnet.id
       application_security_group_ids               = [azurerm_application_security_group.worker_plane.id]
-      application_gateway_backend_address_pool_ids = [local.ag_bp_worker_plane]
+      application_gateway_backend_address_pool_ids = [azurerm_application_gateway.this.backend_address_pool[1].id]
+      primary = true
     }
   }
 

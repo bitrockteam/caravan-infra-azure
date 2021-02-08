@@ -209,4 +209,6 @@ resource "azurerm_application_gateway" "this" {
     tier     = "Standard_v2"
     capacity = 1
   }
+
+  tags = var.tags
 }

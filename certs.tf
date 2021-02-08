@@ -15,7 +15,7 @@ module "terraform_acme_le" {
   azure_tenant_id      = data.azurerm_client_config.this.tenant_id
   azure_resource_group = var.resource_group_name
   azure_client_id      = var.client_id
-  azure_client_secret  = var.azure_client_secret
+  azure_client_secret  = var.client_secret
 }
 
 resource "tls_private_key" "cert_private_key" {

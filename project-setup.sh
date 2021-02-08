@@ -34,9 +34,16 @@ CLIENT_ID=$(echo "$SERVICE_PRINCIPAL" | jq -r ".appId")
 CLIENT_SECRET=$(echo "$SERVICE_PRINCIPAL" | jq -r ".password")
 TENANT_ID=$(echo "$SERVICE_PRINCIPAL" | jq -r ".tenant")
 
+# Allow access for Terraform backend operations
 az role assignment create \
   --scope "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
   --role "Storage Blob Data Contributor" \
+  --assignee "$CLIENT_ID"
+
+# Allow assigning permissions to other entities
+az role assignment create \
+  --scope "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
+  --role "User Access Administrator" \
   --assignee "$CLIENT_ID"
 
 cat <<EOT > backend.tf

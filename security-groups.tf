@@ -114,6 +114,8 @@ resource "azurerm_application_security_group" "control_plane" {
   location            = var.location
   name                = "${var.prefix}-control-plane-sg"
   resource_group_name = var.resource_group_name
+
+  tags = var.tags
 }
 
 // application - worker plane
@@ -121,5 +123,7 @@ resource "azurerm_application_security_group" "worker_plane" {
   location            = var.location
   name                = "${var.prefix}-worker-plane-sg"
   resource_group_name = var.resource_group_name
+
+  tags = var.tags
 }
 
