@@ -28,16 +28,16 @@ echo "Generating a service principal..."
 SERVICE_PRINCIPAL=$(az ad sp create-for-rbac \
   --name="${PREFIX}-tf-sp" \
   --role="Contributor" \
-  --scopes="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
-  --scopes="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${PARENT_RESOURCE_GROUP}")
+  --scopes "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${PARENT_RESOURCE_GROUP}")
 
 CLIENT_ID=$(echo "$SERVICE_PRINCIPAL" | jq -r ".appId")
 CLIENT_SECRET=$(echo "$SERVICE_PRINCIPAL" | jq -r ".password")
 TENANT_ID=$(echo "$SERVICE_PRINCIPAL" | jq -r ".tenant")
 
-echo "Generating SAS token..."
-CONNECTION_STRING=$(az storage account show-connection-string --name "$STORAGE_ACCOUNT" | jq -r ".connectionString")
-SAS_TOKEN=$(az storage container generate-sas --name "$CONTAINER_NAME" --connection-string "$CONNECTION_STRING")
+az role assignment create \
+  --scope "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
+  --role "Storage Blob Data Contributor" \
+  --assignee "$CLIENT_ID"
 
 cat <<EOT > backend.tf
 terraform {
@@ -46,7 +46,10 @@ terraform {
     storage_account_name = "${STORAGE_ACCOUNT}"
     container_name       = "${CONTAINER_NAME}"
     key                  = "infraboot/terraform/state/terraform.tfstate"
-    sas_token            = "${SAS_TOKEN}"
+    client_id            = "${CLIENT_ID}"
+    client_secret        = "${CLIENT_SECRET}"
+    tenant_id            = "${TENANT_ID}"
+    subscription_id      = "${SUBSCRIPTION_ID}"
   }
 }
 EOT
@@ -55,7 +58,7 @@ cat <<EOT > azure.tfvars
 resource_group_name        = "${RESOURCE_GROUP}"
 parent_resource_group_name = "${PARENT_RESOURCE_GROUP}"
 storage_account_name       = "${STORAGE_ACCOUNT}"
-prefix                     = "${PREFIX}
+prefix                     = "${PREFIX}"
 location                   = "${LOCATION}"
 external_domain            = "caravan-azure.bitrock.it"
 
