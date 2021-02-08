@@ -26,6 +26,7 @@ az storage container create --name "$CONTAINER_NAME" --resource-group "$RESOURCE
 
 echo "Generating a service principal..."
 SERVICE_PRINCIPAL=$(az ad sp create-for-rbac \
+  --name="${PREFIX}-tf-sp" \
   --role="Contributor" \
   --scopes="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
   --scopes="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${PARENT_RESOURCE_GROUP}")
