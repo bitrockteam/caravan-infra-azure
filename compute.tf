@@ -66,12 +66,7 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
     disk_size_gb         = var.control_plane_disk_size
   }
 
-  source_image_reference { //todo
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
+  source_image_id = data.azurerm_image.caravan.os_disk.managed_disk_id
 
   identity {
     type         = "SystemAssigned, UserAssigned"
@@ -112,12 +107,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
     disk_size_gb         = var.control_plane_disk_size
   }
 
-  source_image_reference { //todo
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
+  source_image_id = data.azurerm_image.caravan.os_disk.managed_disk_id
 
   identity {
     type         = "SystemAssigned, UserAssigned"

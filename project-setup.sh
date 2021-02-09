@@ -63,6 +63,7 @@ EOT
 
 cat <<EOT > azure.tfvars
 resource_group_name        = "${RESOURCE_GROUP}"
+image_resource_group_name  = "${PARENT_RESOURCE_GROUP}"
 parent_resource_group_name = "${PARENT_RESOURCE_GROUP}"
 storage_account_name       = "${STORAGE_ACCOUNT}"
 prefix                     = "${PREFIX}"

@@ -106,3 +106,6 @@ variable "parent_resource_group_name" {
 variable "use_le_staging" {
   type = bool
 }
+variable "image_resource_group_name" {
+  type = string
+}
