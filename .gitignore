@@ -174,3 +174,4 @@ taint.sh
 files/*.jar
 files/echo-server
 *.pem
+state.json
