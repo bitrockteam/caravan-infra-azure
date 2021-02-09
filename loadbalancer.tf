@@ -10,19 +10,26 @@ locals {
   ag_fp_http          = "${var.prefix}-port-http"
   ag_fp_https         = "${var.prefix}-port-https"
   ag_gateway_ip       = "${var.prefix}-app-gateway-ip-config"
-  ag_hl_http          = "${var.prefix}-listener-http"
-  ag_hl_https         = "${var.prefix}-listener-https"
   ag_hl_vault         = "${var.prefix}-listener-http-vault"
   ag_hl_consul        = "${var.prefix}-listener-http-consul"
   ag_hl_nomad         = "${var.prefix}-listener-http-nomad"
   ag_hl_ingress       = "${var.prefix}-listener-http-ingress"
-  ag_rrr_vault        = "${var.prefix}-routing-vault"
-  ag_rrr_consul       = "${var.prefix}-routing-consul"
-  ag_rrr_nomad        = "${var.prefix}-routing-nomad"
-  ag_rrr_ingress      = "${var.prefix}-routing-ingress"
+  ag_hl_s_vault       = "${var.prefix}-listener-https-vault"
+  ag_hl_s_consul      = "${var.prefix}-listener-https-consul"
+  ag_hl_s_nomad       = "${var.prefix}-listener-https-nomad"
+  ag_hl_s_ingress     = "${var.prefix}-listener-https-ingress"
+  ag_rrr_vault        = "${var.prefix}-http-routing-vault"
+  ag_rrr_consul       = "${var.prefix}-http-routing-consul"
+  ag_rrr_nomad        = "${var.prefix}-http-routing-nomad"
+  ag_rrr_ingress      = "${var.prefix}-http-routing-ingress"
+  ag_rrr_s_vault      = "${var.prefix}-https-routing-vault"
+  ag_rrr_s_consul     = "${var.prefix}-https-routing-consul"
+  ag_rrr_s_nomad      = "${var.prefix}-https-routing-nomad"
+  ag_rrr_s_ingress    = "${var.prefix}-https-routing-ingress"
   ag_probe_vault      = "${var.prefix}-probe-vault"
   ag_probe_consul     = "${var.prefix}-probe-consul"
   ag_probe_nomad      = "${var.prefix}-probe-nomad"
+  ag_ssl_cert_name    = "${var.prefix}-ssl-cert"
 }
 
 resource "azurerm_public_ip" "lb" {
@@ -55,6 +62,7 @@ resource "azurerm_application_gateway" "this" {
     protocol              = "Http"
     host_name             = "vault.${var.prefix}.${var.external_domain}"
     probe_name            = local.ag_probe_vault
+    request_timeout       = 30
   }
   backend_http_settings {
     cookie_based_affinity = "Disabled"
@@ -63,6 +71,7 @@ resource "azurerm_application_gateway" "this" {
     protocol              = "Http"
     host_name             = "consul.${var.prefix}.${var.external_domain}"
     probe_name            = local.ag_probe_consul
+    request_timeout       = 30
   }
   backend_http_settings {
     cookie_based_affinity = "Disabled"
@@ -71,6 +80,7 @@ resource "azurerm_application_gateway" "this" {
     protocol              = "Http"
     host_name             = "nomad.${var.prefix}.${var.external_domain}"
     probe_name            = local.ag_probe_nomad
+    request_timeout       = 30
   }
   backend_http_settings {
     cookie_based_affinity = "Disabled"
@@ -78,6 +88,7 @@ resource "azurerm_application_gateway" "this" {
     port                  = 8080
     protocol              = "Http"
     host_name             = "*.${var.prefix}.${var.external_domain}"
+    request_timeout       = 30
   }
 
   frontend_ip_configuration {
@@ -134,13 +145,38 @@ resource "azurerm_application_gateway" "this" {
     protocol                       = "Http"
   }
 
-  //  http_listener {
-  //    frontend_ip_configuration_name = local.ag_frontend_ip
-  //    frontend_port_name             = local.ag_fp_https
-  //    name                           = local.ag_hl_https
-  //    host_names                     = ["*.${var.prefix}.${var.external_domain}"]
-  //    protocol                       = "Https"
-  //  }
+  http_listener {
+    frontend_ip_configuration_name = local.ag_fi_public
+    frontend_port_name             = local.ag_fp_https
+    name                           = local.ag_hl_s_vault
+    host_name                      = "vault.${var.prefix}.${var.external_domain}"
+    protocol                       = "Https"
+    ssl_certificate_name           = local.ag_ssl_cert_name
+  }
+  http_listener {
+    frontend_ip_configuration_name = local.ag_fi_public
+    frontend_port_name             = local.ag_fp_https
+    name                           = local.ag_hl_s_consul
+    host_name                      = "consul.${var.prefix}.${var.external_domain}"
+    protocol                       = "Https"
+    ssl_certificate_name           = local.ag_ssl_cert_name
+  }
+  http_listener {
+    frontend_ip_configuration_name = local.ag_fi_public
+    frontend_port_name             = local.ag_fp_https
+    name                           = local.ag_hl_s_nomad
+    host_name                      = "nomad.${var.prefix}.${var.external_domain}"
+    protocol                       = "Https"
+    ssl_certificate_name           = local.ag_ssl_cert_name
+  }
+  http_listener {
+    frontend_ip_configuration_name = local.ag_fi_public
+    frontend_port_name             = local.ag_fp_https
+    name                           = local.ag_hl_s_ingress
+    host_names                     = ["*.${var.prefix}.${var.external_domain}"]
+    protocol                       = "Https"
+    ssl_certificate_name           = local.ag_ssl_cert_name
+  }
 
   request_routing_rule {
     http_listener_name         = local.ag_hl_vault
@@ -166,6 +202,35 @@ resource "azurerm_application_gateway" "this" {
   request_routing_rule {
     http_listener_name         = local.ag_hl_ingress
     name                       = local.ag_rrr_ingress
+    rule_type                  = "Basic"
+    backend_address_pool_name  = local.ag_bp_worker_plane
+    backend_http_settings_name = local.ag_bhs_ingress
+  }
+
+  request_routing_rule {
+    http_listener_name         = local.ag_hl_s_vault
+    name                       = local.ag_rrr_s_vault
+    rule_type                  = "Basic"
+    backend_address_pool_name  = local.ag_bp_control_plane
+    backend_http_settings_name = local.ag_bhs_vault
+  }
+  request_routing_rule {
+    http_listener_name         = local.ag_hl_s_consul
+    name                       = local.ag_rrr_s_consul
+    rule_type                  = "Basic"
+    backend_address_pool_name  = local.ag_bp_control_plane
+    backend_http_settings_name = local.ag_bhs_consul
+  }
+  request_routing_rule {
+    http_listener_name         = local.ag_hl_s_nomad
+    name                       = local.ag_rrr_s_nomad
+    rule_type                  = "Basic"
+    backend_address_pool_name  = local.ag_bp_control_plane
+    backend_http_settings_name = local.ag_bhs_nomad
+  }
+  request_routing_rule {
+    http_listener_name         = local.ag_hl_s_ingress
+    name                       = local.ag_rrr_s_ingress
     rule_type                  = "Basic"
     backend_address_pool_name  = local.ag_bp_worker_plane
     backend_http_settings_name = local.ag_bhs_ingress
@@ -208,6 +273,17 @@ resource "azurerm_application_gateway" "this" {
     name     = "Standard_v2"
     tier     = "Standard_v2"
     capacity = 1
+  }
+
+  ssl_certificate {
+    name     = local.ag_ssl_cert_name
+    data     = module.terraform_acme_le.certificate_p12
+    password = module.terraform_acme_le.certificate_p12_password
+  }
+
+  ssl_policy {
+    policy_type = "Predefined"
+    policy_name = "AppGwSslPolicy20170401S"
   }
 
   tags = var.tags

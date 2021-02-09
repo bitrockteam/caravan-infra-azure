@@ -8,14 +8,16 @@ provider "acme" {
 }
 
 module "terraform_acme_le" {
-  source               = "git::ssh://git@github.com/bitrockteam/caravan-acme-le?ref=master"
-  common_name          = "${var.prefix}.${var.external_domain}"
-  dns_provider         = "azure"
-  private_key          = tls_private_key.cert_private_key.private_key_pem
-  azure_tenant_id      = data.azurerm_client_config.this.tenant_id
-  azure_resource_group = var.resource_group_name
-  azure_client_id      = var.client_id
-  azure_client_secret  = var.client_secret
+  source                = "git::ssh://git@github.com/bitrockteam/caravan-acme-le?ref=master"
+  common_name           = "${var.prefix}.${var.external_domain}"
+  dns_provider          = "azure"
+  private_key           = tls_private_key.cert_private_key.private_key_pem
+  azure_subscription_id = var.subscription_id
+  azure_tenant_id       = data.azurerm_client_config.this.tenant_id
+  azure_resource_group  = var.resource_group_name
+  azure_client_id       = var.client_id
+  azure_client_secret   = var.client_secret
+  azure_environment     = "public"
 }
 
 resource "tls_private_key" "cert_private_key" {

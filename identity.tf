@@ -26,6 +26,12 @@ resource "azurerm_role_assignment" "control_plane_acr_read" {
   scope              = data.azurerm_resource_group.this.id
 }
 
+resource "azurerm_role_assignment" "control_plane_key_vault_user" {
+  principal_id       = azurerm_user_assigned_identity.control_plane.principal_id
+  role_definition_id = data.azurerm_role_definition.key_vault_user.role_definition_id
+  scope              = data.azurerm_resource_group.this.id
+}
+
 resource "azurerm_role_assignment" "worker_plane_acr_read" {
   principal_id       = azurerm_user_assigned_identity.worker_plane.principal_id
   role_definition_id = data.azurerm_role_definition.acr_pull.role_definition_id
@@ -35,11 +41,18 @@ resource "azurerm_role_assignment" "worker_plane_acr_read" {
 // builtin roles
 
 data "azurerm_role_definition" "acr_pull" {
-  name = "AcrPull"
+  name  = "AcrPull"
+  scope = data.azurerm_resource_group.this.id
 }
 
 data "azurerm_role_definition" "virtual_machine_user" {
-  name = "Virtual Machine User Login"
+  name  = "Virtual Machine User Login"
+  scope = data.azurerm_resource_group.this.id
+}
+
+data "azurerm_role_definition" "key_vault_user" {
+  name  = "Key Vault Crypto User"
+  scope = data.azurerm_resource_group.this.id
 }
 
 // custom roles

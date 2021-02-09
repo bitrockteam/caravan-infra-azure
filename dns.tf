@@ -19,3 +19,13 @@ resource "azurerm_dns_ns_record" "this" {
 
   tags = var.tags
 }
+
+resource "azurerm_dns_a_record" "star" {
+  name                = "*"
+  records             = [azurerm_public_ip.lb.ip_address]
+  resource_group_name = var.resource_group_name
+  ttl                 = 30
+  zone_name           = azurerm_dns_zone.this.name
+
+  tags = var.tags
+}

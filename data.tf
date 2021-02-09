@@ -11,6 +11,8 @@ data "azurerm_storage_account" "this" {
 
 data "azurerm_image" "caravan" {
   resource_group_name = var.image_resource_group_name
-  name_regex = "hashicorp-centos-image-*"
-  sort_descending = true
+  name_regex          = "hashicorp-centos-image-*"
+  sort_descending     = true
 }
+
+data "azurerm_subscription" "this" {}

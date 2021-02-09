@@ -55,7 +55,7 @@ variable "control_plane_instance_count" {
 }
 variable "control_plane_size" {
   type    = string
-  default = "Standard_F2"
+  default = "Standard_B2s"
 }
 variable "control_plane_disk_size" {
   type    = string
@@ -67,7 +67,7 @@ variable "worker_plane_instance_count" {
 }
 variable "worker_plane_size" {
   type    = string
-  default = "Standard_F2"
+  default = "Standard_B2s"
 }
 variable "dc_name" {
   type    = string
@@ -98,7 +98,7 @@ variable "azure_csi" {
   default = true
 }
 variable "external_domain" {
-  type    = string
+  type = string
 }
 variable "parent_resource_group_name" {
   type = string

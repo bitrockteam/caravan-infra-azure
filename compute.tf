@@ -13,6 +13,16 @@ locals {
   control_plane_nic_config_name = "internal"
 }
 
+resource "azurerm_public_ip" "control_plane" {
+  count               = var.control_plane_instance_count
+  name                = "${var.prefix}-control-plane-ip-${count.index}"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  allocation_method   = "Dynamic"
+
+  tags = var.tags
+}
+
 resource "azurerm_network_interface" "control_plane" {
   count               = var.control_plane_instance_count
   name                = "${var.prefix}-control-plane-${count.index}"
@@ -23,6 +33,7 @@ resource "azurerm_network_interface" "control_plane" {
     name                          = local.control_plane_nic_config_name
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.control_plane[count.index].id
   }
 
   tags = var.tags
@@ -66,10 +77,10 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
     disk_size_gb         = var.control_plane_disk_size
   }
 
-  source_image_id = data.azurerm_image.caravan.os_disk.managed_disk_id
+  source_image_id = data.azurerm_image.caravan.id
 
   identity {
-    type         = "SystemAssigned, UserAssigned"
+    type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.control_plane.id]
   }
   tags = var.tags
@@ -90,14 +101,14 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   custom_data         = module.cloud_init_worker_plane.worker_plane_user_data
 
   network_interface {
-    name = "${var.prefix}-worker-plane"
+    name    = "${var.prefix}-worker-plane"
     primary = true
     ip_configuration {
       name                                         = "internal"
       subnet_id                                    = azurerm_subnet.subnet.id
       application_security_group_ids               = [azurerm_application_security_group.worker_plane.id]
       application_gateway_backend_address_pool_ids = [azurerm_application_gateway.this.backend_address_pool[1].id]
-      primary = true
+      primary                                      = true
     }
   }
 
@@ -107,10 +118,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
     disk_size_gb         = var.control_plane_disk_size
   }
 
-  source_image_id = data.azurerm_image.caravan.os_disk.managed_disk_id
+  source_image_id = data.azurerm_image.caravan.id
 
   identity {
-    type         = "SystemAssigned, UserAssigned"
+    type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.worker_plane.id]
   }
   tags = var.tags

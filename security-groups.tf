@@ -46,13 +46,42 @@ resource "azurerm_network_security_rule" "allow_in_icmp" {
 resource "azurerm_network_security_rule" "allow_in_internal" {
   access                      = "Allow"
   direction                   = "Inbound"
-  name                        = "${var.prefix}-allow-in-control-plane"
+  name                        = "${var.prefix}-allow-in-control-plane-from-control-plane"
   network_security_group_name = azurerm_network_security_group.default.name
   priority                    = 502
   protocol                    = "*"
   resource_group_name         = var.resource_group_name
   source_application_security_group_ids = [
-    azurerm_application_security_group.control_plane.id,
+    azurerm_application_security_group.control_plane.id
+  ]
+  source_port_range = "*"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.control_plane.id
+  ]
+  destination_port_ranges = [
+    8200,
+    8201,
+    8300,
+    8301,
+    8302,
+    8500,
+    8501,
+    8502,
+    4646,
+    4647,
+    4648
+  ]
+}
+
+resource "azurerm_network_security_rule" "allow_in_internal_2" {
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = "${var.prefix}-allow-in-control-plane-from-worker-plane"
+  network_security_group_name = azurerm_network_security_group.default.name
+  priority                    = 503
+  protocol                    = "*"
+  resource_group_name         = var.resource_group_name
+  source_application_security_group_ids = [
     azurerm_application_security_group.worker_plane.id
   ]
   source_port_range = "*"
@@ -79,7 +108,7 @@ resource "azurerm_network_security_rule" "allow_in_lb" {
   direction                   = "Inbound"
   name                        = "${var.prefix}-allow-in-from-lb"
   network_security_group_name = azurerm_network_security_group.default.name
-  priority                    = 503
+  priority                    = 504
   protocol                    = "tcp"
   resource_group_name         = var.resource_group_name
   source_address_prefix       = "AzureLoadBalancer"
@@ -100,7 +129,7 @@ resource "azurerm_network_security_rule" "lb_default_rules" {
   direction                   = "Inbound"
   name                        = "${var.prefix}-allow-in-internet-to-loadbalancer"
   network_security_group_name = azurerm_network_security_group.app_gateway.name
-  priority                    = 504
+  priority                    = 505
   protocol                    = "tcp"
   resource_group_name         = var.resource_group_name
   source_address_prefix       = "GatewayManager"
