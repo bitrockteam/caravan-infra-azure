@@ -27,6 +27,6 @@ module "hashicorp-bootstrap" {
   azure_tenant_id  = data.azurerm_client_config.this.tenant_id
   azure_vault_name = azurerm_key_vault.key_vault.name
   azure_key_name   = azurerm_key_vault_key.key.name
-  azure_resource   = "https://management.azure.com/"
+  azure_resource  = azuread_application.vault.homepage
   azure_node_role  = local.control_plane_role_name
 }

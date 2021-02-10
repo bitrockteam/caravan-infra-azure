@@ -11,7 +11,7 @@ module "cloud_init_control_plane" {
   dc_name         = var.dc_name
   auto_auth_type  = "azure"
   azure_node_role = local.control_plane_role_name
-  azure_resource  = "https://management.azure.com/"
+  azure_resource  = azuread_application.vault.homepage
 }
 
 module "cloud_init_worker_plane" {
@@ -21,5 +21,5 @@ module "cloud_init_worker_plane" {
   dc_name         = var.dc_name
   auto_auth_type  = "azure"
   azure_node_role = local.worker_plane_role_name
-  azure_resource  = "https://management.azure.com/"
+  azure_resource  = azuread_application.vault.homepage
 }
