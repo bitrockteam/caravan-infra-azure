@@ -1,6 +1,11 @@
 module "hashicorp-bootstrap" {
   depends_on = [
-    azurerm_linux_virtual_machine.control_plane
+    azurerm_linux_virtual_machine.control_plane,
+    azurerm_network_interface.control_plane,
+    azurerm_network_interface_application_security_group_association.control_plane,
+    azurerm_network_security_group.default,
+    azurerm_key_vault_access_policy.control_plane,
+    azurerm_key_vault_key.key
   ]
 
   source                         = "git::ssh://git@github.com/bitrockteam/hashicorp-terraform-bootstrap?ref=main"

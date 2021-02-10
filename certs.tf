@@ -8,6 +8,7 @@ provider "acme" {
 }
 
 module "terraform_acme_le" {
+  depends_on            = [azurerm_dns_ns_record.this]
   source                = "git::ssh://git@github.com/bitrockteam/caravan-acme-le?ref=feature/support-p12"
   common_name           = "${var.prefix}.${var.external_domain}"
   dns_provider          = "azure"
@@ -18,7 +19,7 @@ module "terraform_acme_le" {
   azure_client_id       = var.client_id
   azure_client_secret   = var.client_secret
   azure_environment     = "public"
-  from_csr = false
+  from_csr              = false
 }
 
 resource "tls_private_key" "cert_private_key" {
