@@ -29,3 +29,27 @@ output "subscription_id" {
 output "vault_resource_name" {
   value = var.vault_auth_resource
 }
+
+output "platform_tfvars" {
+  value = local.tfvars_platform
+}
+
+output "platform_backend" {
+  value = local.backend_tf_platform
+}
+
+output "appsupport_tfvars" {
+  value = local.tfvars_appsupport
+}
+
+output "appsupport_backend" {
+  value = local.backend_tf_appsupport
+}
+
+output "workload_tfvars" {
+  value = local.tfvars_workload
+}
+
+output "workload_backend" {
+  value = local.backend_tf_workload
+}
