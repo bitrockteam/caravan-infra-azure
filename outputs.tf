@@ -11,11 +11,11 @@ output "tenant_id" {
 }
 
 output "control_plane_service_principal_ids" {
-  value = [for n in azurerm_linux_virtual_machine.control_plane : n.identity[0].principal_id ]
+  value = [for n in azurerm_linux_virtual_machine.control_plane : n.identity[0].principal_id]
 }
 
 output "worker_plane_service_principal_ids" {
-  value = [for n in azurerm_linux_virtual_machine_scale_set.worker_plane.identity: n.principal_id ]
+  value = [for n in azurerm_linux_virtual_machine_scale_set.worker_plane.identity : n.principal_id]
 }
 
 output "resource_group_name" {

@@ -110,6 +110,6 @@ variable "image_resource_group_name" {
   type = string
 }
 variable "vault_auth_resource" {
-  type = string
+  type    = string
   default = "https://management.azure.com/"
 }

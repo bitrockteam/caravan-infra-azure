@@ -144,7 +144,7 @@ resource "azurerm_application_gateway" "this" {
     frontend_ip_configuration_name = local.ag_fi_public
     frontend_port_name             = local.ag_fp_http
     name                           = local.ag_hl_ingress
-    host_names                     = [ for n in local.ag_worker_plane_apps: "${n}.${var.prefix}.${var.external_domain}" ]
+    host_names                     = [for n in local.ag_worker_plane_apps : "${n}.${var.prefix}.${var.external_domain}"]
     protocol                       = "Http"
   }
 
@@ -176,7 +176,7 @@ resource "azurerm_application_gateway" "this" {
     frontend_ip_configuration_name = local.ag_fi_public
     frontend_port_name             = local.ag_fp_https
     name                           = local.ag_hl_s_ingress
-    host_names                     = [ for n in local.ag_worker_plane_apps: "${n}.${var.prefix}.${var.external_domain}" ]
+    host_names                     = [for n in local.ag_worker_plane_apps : "${n}.${var.prefix}.${var.external_domain}"]
     protocol                       = "Https"
     ssl_certificate_name           = local.ag_ssl_cert_name
   }
