@@ -32,10 +32,6 @@ resource "azurerm_key_vault_access_policy" "self" {
   ]
 }
 
-//data "azuread_service_principal" "control_plane" {
-//  application_id = azurerm_user_assigned_identity.control_plane.client_id
-//}
-
 data "azuread_service_principal" "control_plane" {
   depends_on = [azurerm_linux_virtual_machine.control_plane]
   count = var.control_plane_instance_count
@@ -47,7 +43,6 @@ resource "azurerm_key_vault_access_policy" "control_plane" {
   count = var.control_plane_instance_count
 
   key_vault_id = azurerm_key_vault.key_vault.id
-  //object_id    = azurerm_user_assigned_identity.control_plane.principal_id
   object_id = data.azuread_service_principal.control_plane[count.index].object_id
   tenant_id = data.azurerm_client_config.this.tenant_id
 

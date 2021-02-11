@@ -3,7 +3,6 @@ locals {
   worker_plane_role_name  = "worker-plane"
 }
 
-
 module "cloud_init_control_plane" {
   source          = "git::ssh://git@github.com/bitrockteam/hashicorp-terraform-cloudinit"
   cluster_nodes   = { for n in azurerm_linux_virtual_machine.control_plane : n.name => n.private_ip_address }
@@ -11,7 +10,7 @@ module "cloud_init_control_plane" {
   dc_name         = var.dc_name
   auto_auth_type  = "azure"
   azure_node_role = local.control_plane_role_name
-  azure_resource  = azuread_application.vault.homepage
+  azure_resource  = var.vault_auth_resource
 }
 
 module "cloud_init_worker_plane" {
@@ -21,5 +20,5 @@ module "cloud_init_worker_plane" {
   dc_name         = var.dc_name
   auto_auth_type  = "azure"
   azure_node_role = local.worker_plane_role_name
-  azure_resource  = azuread_application.vault.homepage
+  azure_resource  = var.vault_auth_resource
 }
