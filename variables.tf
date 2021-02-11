@@ -113,3 +113,16 @@ variable "vault_auth_resource" {
   type    = string
   default = "https://management.azure.com/"
 }
+
+variable "enable_monitoring" {
+  type    = bool
+  default = true
+}
+variable "monitoring_disk_size" {
+  type    = string
+  default = "40"
+}
+variable "monitoring_size" {
+  type    = string
+  default = "Standard_B2s"
+}
