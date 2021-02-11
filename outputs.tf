@@ -26,6 +26,14 @@ output "subscription_id" {
   value = data.azurerm_subscription.this.id
 }
 
-output "resource_name" {
+output "vault_resource_name" {
   value = azuread_application.vault.identifier_uris
+}
+
+output "vault_client_id" {
+  value = azuread_application.vault.application_id
+}
+
+output "vault_client_secret" {
+  value = azuread_application_password.vault.value
 }

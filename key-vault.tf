@@ -37,6 +37,7 @@ resource "azurerm_key_vault_access_policy" "self" {
 //}
 
 data "azuread_service_principal" "control_plane" {
+  depends_on = [azurerm_linux_virtual_machine.control_plane]
   count = var.control_plane_instance_count
 
   display_name = azurerm_linux_virtual_machine.control_plane[count.index].name

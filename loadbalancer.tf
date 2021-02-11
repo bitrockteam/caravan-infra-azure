@@ -30,6 +30,8 @@ locals {
   ag_probe_consul     = "${var.prefix}-probe-consul"
   ag_probe_nomad      = "${var.prefix}-probe-nomad"
   ag_ssl_cert_name    = "${var.prefix}-ssl-cert"
+
+  ag_worker_plane_apps = toset(["jenkins", "jaeger"])
 }
 
 resource "azurerm_public_ip" "lb" {
@@ -43,6 +45,7 @@ resource "azurerm_public_ip" "lb" {
 }
 
 resource "azurerm_application_gateway" "this" {
+  depends_on = [module.hashicorp-bootstrap]
 
   location            = var.location
   name                = "${var.prefix}-app-gateway"
@@ -141,7 +144,7 @@ resource "azurerm_application_gateway" "this" {
     frontend_ip_configuration_name = local.ag_fi_public
     frontend_port_name             = local.ag_fp_http
     name                           = local.ag_hl_ingress
-    host_names                     = ["*.${var.prefix}.${var.external_domain}"]
+    host_names                     = [ for n in local.ag_worker_plane_apps: "${n}.${var.prefix}.${var.external_domain}" ]
     protocol                       = "Http"
   }
 
@@ -173,7 +176,7 @@ resource "azurerm_application_gateway" "this" {
     frontend_ip_configuration_name = local.ag_fi_public
     frontend_port_name             = local.ag_fp_https
     name                           = local.ag_hl_s_ingress
-    host_names                     = ["*.${var.prefix}.${var.external_domain}"]
+    host_names                     = [ for n in local.ag_worker_plane_apps: "${n}.${var.prefix}.${var.external_domain}" ]
     protocol                       = "Https"
     ssl_certificate_name           = local.ag_ssl_cert_name
   }
@@ -250,7 +253,7 @@ resource "azurerm_application_gateway" "this" {
   probe {
     interval                                  = 10
     name                                      = local.ag_probe_consul
-    path                                      = "/v1/sys/leader"
+    path                                      = "/v1/status/leader"
     port                                      = 8500
     protocol                                  = "Http"
     timeout                                   = 30
@@ -261,7 +264,7 @@ resource "azurerm_application_gateway" "this" {
   probe {
     interval                                  = 10
     name                                      = local.ag_probe_nomad
-    path                                      = "/v1/sys/leader"
+    path                                      = "/v1/status/leader"
     port                                      = 4646
     protocol                                  = "Http"
     timeout                                   = 30

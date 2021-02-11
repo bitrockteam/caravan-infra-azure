@@ -81,4 +81,6 @@ tags = {
   repo      = "github.com/bitrockteam/caravan-infra-azure"
   owner     = "${OWNER}"
 }
+
+use_le_staging = false
 EOT
