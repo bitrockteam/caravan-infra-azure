@@ -39,6 +39,34 @@ resource "azurerm_network_interface" "control_plane" {
   tags = var.tags
 }
 
+resource "azurerm_public_ip" "monitoring" {
+  count = var.enable_monitoring ? 1 : 0
+
+  name                = "${var.prefix}-monitoring-ip"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  allocation_method   = "Dynamic"
+
+  tags = var.tags
+}
+
+resource "azurerm_network_interface" "monitoring" {
+  count = var.enable_monitoring ? 1 : 0
+
+  name                = "${var.prefix}-monitoring"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.monitoring[count.index].id
+  }
+
+  tags = var.tags
+}
+
 resource "azurerm_network_interface_application_security_group_association" "control_plane" {
   count                         = var.control_plane_instance_count
   application_security_group_id = azurerm_application_security_group.control_plane.id
@@ -125,5 +153,35 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
     type = "SystemAssigned"
   }
 
+  tags = var.tags
+}
+
+resource "azurerm_linux_virtual_machine" "monitoring" {
+  count = var.enable_monitoring ? 1 : 0
+
+  admin_username = "centos"
+  admin_ssh_key {
+    public_key = tls_private_key.ssh_key.public_key_openssh
+    username   = "centos"
+  }
+
+  location              = var.location
+  name                  = "${var.prefix}-monitoring"
+  network_interface_ids = [azurerm_network_interface.monitoring[count.index].id]
+  resource_group_name   = var.resource_group_name
+  size                  = var.monitoring_size
+  custom_data           = module.cloud_init_worker_plane.monitoring_user_data
+
+  os_disk {
+    caching              = "None"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = var.monitoring_disk_size
+  }
+
+  source_image_id = data.azurerm_image.caravan.id
+
+  identity {
+    type = "SystemAssigned"
+  }
   tags = var.tags
 }
