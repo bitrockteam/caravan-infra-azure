@@ -49,7 +49,6 @@ resource "azurerm_network_interface_application_gateway_backend_address_pool_ass
   depends_on = [azurerm_application_gateway.this]
   count      = var.control_plane_instance_count
 
-  //backend_address_pool_id = local.ag_bp_control_plane
   backend_address_pool_id = azurerm_application_gateway.this.backend_address_pool[0].id
   ip_configuration_name   = local.control_plane_nic_config_name
   network_interface_id    = azurerm_network_interface.control_plane[count.index].id
@@ -80,8 +79,7 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
   source_image_id = data.azurerm_image.caravan.id
 
   identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.control_plane.id]
+    type = "SystemAssigned"
   }
   tags = var.tags
 }
@@ -109,6 +107,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
       application_security_group_ids               = [azurerm_application_security_group.worker_plane.id]
       application_gateway_backend_address_pool_ids = [azurerm_application_gateway.this.backend_address_pool[1].id]
       primary                                      = true
+      public_ip_address {
+        name = "${var.prefix}-worker-plane-public-ip"
+      }
     }
   }
 
@@ -121,8 +122,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   source_image_id = data.azurerm_image.caravan.id
 
   identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.worker_plane.id]
+    type = "SystemAssigned"
   }
+
   tags = var.tags
 }
