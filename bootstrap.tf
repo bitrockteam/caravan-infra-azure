@@ -8,7 +8,7 @@ module "hashicorp-bootstrap" {
     azurerm_key_vault_key.key
   ]
 
-  source                         = "git::ssh://git@github.com/bitrockteam/hashicorp-terraform-bootstrap?ref=main"
+  source                         = "git::ssh://git@github.com/bitrockteam/caravan-bootstrap?ref=main"
   ssh_private_key                = chomp(tls_private_key.ssh_key.private_key_pem)
   ssh_user                       = "centos"
   ssh_timeout                    = "240s"
