@@ -26,6 +26,8 @@ locals {
     use_le_staging    = var.use_le_staging
     dc_name           = var.dc_name
     jenkins_volume_id = var.azure_csi ? azurerm_managed_disk.jenkins[0].id : ""
+    tenant_id         = var.tenant_id
+    subscription_id   = var.subscription_id
   })
   backend_tf_appsupport = templatefile("${path.module}/templates/backend.hcl", {
     key                  = "appsupport"
