@@ -156,3 +156,10 @@ resource "azurerm_application_security_group" "worker_plane" {
   tags = var.tags
 }
 
+resource "azurerm_application_security_group" "monitoring" {
+  location            = var.location
+  name                = "${var.prefix}-monitoring-sg"
+  resource_group_name = var.resource_group_name
+
+  tags = var.tags
+}

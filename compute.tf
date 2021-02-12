@@ -10,7 +10,7 @@ resource "local_file" "ssh_key" {
 }
 
 locals {
-  control_plane_nic_config_name = "internal"
+  main_ip_config = "internal"
 }
 
 resource "azurerm_public_ip" "control_plane" {
@@ -30,7 +30,7 @@ resource "azurerm_network_interface" "control_plane" {
   resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = local.control_plane_nic_config_name
+    name                          = local.main_ip_config
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.control_plane[count.index].id
@@ -58,7 +58,7 @@ resource "azurerm_network_interface" "monitoring" {
   resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = local.main_ip_config
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.monitoring[count.index].id
@@ -78,8 +78,29 @@ resource "azurerm_network_interface_application_gateway_backend_address_pool_ass
   count      = var.control_plane_instance_count
 
   backend_address_pool_id = azurerm_application_gateway.this.backend_address_pool[0].id
-  ip_configuration_name   = local.control_plane_nic_config_name
+  ip_configuration_name   = local.main_ip_config
   network_interface_id    = azurerm_network_interface.control_plane[count.index].id
+}
+
+resource "azurerm_network_interface_application_security_group_association" "monitoring" {
+  count                         = var.enable_monitoring ? 1 : 0
+  application_security_group_id = azurerm_application_security_group.worker_plane.id
+  network_interface_id          = azurerm_network_interface.monitoring[count.index].id
+}
+
+resource "azurerm_network_interface_application_security_group_association" "monitoring_2" {
+  count                         = var.enable_monitoring ? 1 : 0
+  application_security_group_id = azurerm_application_security_group.monitoring.id
+  network_interface_id          = azurerm_network_interface.monitoring[count.index].id
+}
+
+resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "monitoring" {
+  depends_on = [azurerm_application_gateway.this]
+  count      = var.enable_monitoring ? 1 : 0
+
+  backend_address_pool_id = azurerm_application_gateway.this.backend_address_pool[1].id
+  ip_configuration_name   = local.main_ip_config
+  network_interface_id    = azurerm_network_interface.monitoring[count.index].id
 }
 
 resource "azurerm_linux_virtual_machine" "control_plane" {
@@ -130,7 +151,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
     name    = "${var.prefix}-worker-plane"
     primary = true
     ip_configuration {
-      name                                         = "internal"
+      name                                         = local.main_ip_config
       subnet_id                                    = azurerm_subnet.subnet.id
       application_security_group_ids               = [azurerm_application_security_group.worker_plane.id]
       application_gateway_backend_address_pool_ids = [azurerm_application_gateway.this.backend_address_pool[1].id]

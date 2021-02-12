@@ -82,5 +82,5 @@ tags = {
   owner     = "${OWNER}"
 }
 
-use_le_staging = false
+use_le_staging = true
 EOT
