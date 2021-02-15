@@ -45,7 +45,7 @@ resource "azurerm_public_ip" "lb" {
 }
 
 resource "azurerm_application_gateway" "this" {
-  depends_on = [module.hashicorp-bootstrap]
+  depends_on = [module.caravan_bootstrap]
 
   location            = var.location
   name                = "${var.prefix}-app-gateway"
