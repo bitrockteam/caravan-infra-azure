@@ -47,9 +47,9 @@ terraform apply -var-file azure.tfvars
 
 | Name | Source | Version |
 |------|--------|---------|
-| cloud_init_control_plane | git::ssh://git@github.com/bitrockteam/caravan-cloudinit |  |
-| cloud_init_worker_plane | git::ssh://git@github.com/bitrockteam/caravan-cloudinit |  |
-| hashicorp-bootstrap | git::ssh://git@github.com/bitrockteam/caravan-bootstrap?ref=main |  |
+| caravan_bootstrap | git::ssh://git@github.com/bitrockteam/caravan-bootstrap?ref=main |  |
+| cloud_init_control_plane | git::ssh://git@github.com/bitrockteam/caravan-cloudinit?ref=main |  |
+| cloud_init_worker_plane | git::ssh://git@github.com/bitrockteam/caravan-cloudinit?ref=main |  |
 | terraform_acme_le | git::ssh://git@github.com/bitrockteam/caravan-acme-le?ref=main |  |
 
 ## Resources
@@ -62,8 +62,8 @@ terraform apply -var-file azure.tfvars
 | [azurerm_client_config](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/client_config) |
 | [azurerm_dns_a_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_a_record) |
 | [azurerm_dns_ns_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_ns_record) |
-| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/dns_zone) |
 | [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_zone) |
+| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/dns_zone) |
 | [azurerm_image](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/image) |
 | [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault) |
 | [azurerm_key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault_access_policy) |

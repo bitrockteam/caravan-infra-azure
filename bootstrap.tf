@@ -1,4 +1,4 @@
-module "hashicorp-bootstrap" {
+module "caravan_bootstrap" {
   depends_on = [
     azurerm_linux_virtual_machine.control_plane,
     azurerm_network_interface.control_plane,
