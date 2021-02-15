@@ -159,6 +159,7 @@ variable "vault_auth_resource" {
   default     = "https://management.azure.com/"
   description = "The Azure AD application to use for generating access tokens."
 }
+
 variable "tags" {
   type = map(string)
   default = {
