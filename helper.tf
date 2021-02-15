@@ -61,7 +61,7 @@ resource "local_file" "tfvars_platform" {
   content  = local.tfvars_platform
 }
 resource "local_file" "backend_tf_platform" {
-  filename = "${path.module}/../caravan-platform/${var.prefix}-azure-backend.tf"
+  filename = "${path.module}/../caravan-platform/${var.prefix}-azure-backend.tf.bak"
   content  = local.backend_tf_platform
 }
 
@@ -70,7 +70,7 @@ resource "local_file" "tfvars_appsupport" {
   content  = local.tfvars_appsupport
 }
 resource "local_file" "backend_tf_appsupport" {
-  filename = "${path.module}/../caravan-application-support/${var.prefix}-azure-backend.tf"
+  filename = "${path.module}/../caravan-application-support/${var.prefix}-azure-backend.tf.bak"
   content  = local.backend_tf_appsupport
 }
 
@@ -79,6 +79,6 @@ resource "local_file" "tfvars_workload" {
   content  = local.tfvars_workload
 }
 resource "local_file" "backend_tf_workload" {
-  filename = "${path.module}/../caravan-workload/${var.prefix}-azure-backend.tf"
+  filename = "${path.module}/../caravan-workload/${var.prefix}-azure-backend.tf.bak"
   content  = local.backend_tf_workload
 }

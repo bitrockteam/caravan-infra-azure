@@ -165,7 +165,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   os_disk {
     caching              = "None"
     storage_account_type = "Standard_LRS"
-    disk_size_gb         = var.control_plane_disk_size
+    disk_size_gb         = var.worker_plane_disk_size
   }
 
   source_image_id = data.azurerm_image.caravan.id

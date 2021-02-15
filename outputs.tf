@@ -56,3 +56,10 @@ output "workload_tfvars" {
 output "workload_backend" {
   value = local.backend_tf_workload
 }
+
+output "ips" {
+  value = {
+    control_plane = { for n in azurerm_linux_virtual_machine.control_plane : n.name => n.public_ip_address }
+    monitoring    = { for n in azurerm_linux_virtual_machine.monitoring : n.name => n.public_ip_address }
+  }
+}
