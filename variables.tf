@@ -32,14 +32,21 @@ variable "location" {
   description = "The Azure location where to create resources."
 }
 
-variable "tags" {
-  type = map(string)
-  default = {
-    project = "caravan"
-  }
-  description = "A set of key-value tags applied to all resources created by Terraform."
+// DNS
+variable "external_domain" {
+  type        = string
+  description = "The external domain to use for registering DNS names."
+}
+variable "parent_resource_group_name" {
+  type        = string
+  description = "The Azure Resource Group name where a dns zone exists for external_domain."
+}
+variable "use_le_staging" {
+  type        = bool
+  description = "Whether to use Let's Encrypt staging endpoint."
 }
 
+// Networking
 variable "vnet_cidrs" {
   type        = list(string)
   default     = ["10.0.0.0/16"]
@@ -61,6 +68,7 @@ variable "allowed_ssh_cidrs" {
   description = "The list of CIDRs from which ssh is allowed."
 }
 
+// Control Plane
 variable "control_plane_instance_count" {
   type        = number
   default     = 3
@@ -76,6 +84,8 @@ variable "control_plane_disk_size" {
   default     = "40"
   description = "The size of control plane instances disk."
 }
+
+// Worker plane
 variable "worker_plane_instance_count" {
   type        = number
   default     = 3
@@ -91,6 +101,24 @@ variable "worker_plane_disk_size" {
   default     = "40"
   description = "The size of worker plane instances disk."
 }
+
+// Monitoring
+variable "enable_monitoring" {
+  type        = bool
+  default     = true
+  description = "Whether to create an additional instance for monitoring purposes."
+}
+variable "monitoring_disk_size" {
+  type        = string
+  default     = "40"
+  description = "The size of monitoring instance disk."
+}
+variable "monitoring_size" {
+  type        = string
+  default     = "Standard_B2s"
+  description = "The size of monitoring instance."
+}
+
 variable "dc_name" {
   type    = string
   default = "azure-dc"
@@ -122,18 +150,6 @@ variable "azure_csi" {
   default     = true
   description = "Wheter to create an Azure Disk for Nomad Volume CSI testing."
 }
-variable "external_domain" {
-  type        = string
-  description = "The external domain to use for registering DNS names."
-}
-variable "parent_resource_group_name" {
-  type        = string
-  description = "The Azure Resource Group name where a dns zone exists for external_domain."
-}
-variable "use_le_staging" {
-  type        = bool
-  description = "Whether to use Let's Encrypt staging endpoint."
-}
 variable "image_resource_group_name" {
   type        = string
   description = "The Azure Resource Group name where Caravan images are available."
@@ -143,20 +159,10 @@ variable "vault_auth_resource" {
   default     = "https://management.azure.com/"
   description = "The Azure AD application to use for generating access tokens."
 }
-
-variable "enable_monitoring" {
-  type        = bool
-  default     = true
-  description = "Whether to create an additional instance for monitoring purposes."
-}
-variable "monitoring_disk_size" {
-  type        = string
-  default     = "40"
-  description = "The size of monitoring instance disk."
-
-}
-variable "monitoring_size" {
-  type        = string
-  default     = "Standard_B2s"
-  description = "The size of monitoring instance."
+variable "tags" {
+  type = map(string)
+  default = {
+    project = "caravan"
+  }
+  description = "A set of key-value tags applied to all resources created by Terraform."
 }
