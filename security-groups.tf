@@ -138,6 +138,20 @@ resource "azurerm_network_security_rule" "lb_default_rules" {
   destination_port_range      = "65200-65535"
 }
 
+resource "azurerm_network_security_rule" "allow_nomad_consul_envoy" {
+  access                       = "Allow"
+  direction                    = "Inbound"
+  name                         = "${var.prefix}-envoy-internal"
+  network_security_group_name  = azurerm_network_security_group.default.name
+  priority                     = 506
+  protocol                     = "tcp"
+  resource_group_name          = var.resource_group_name
+  source_address_prefixes      = var.vnet_cidrs
+  source_port_range            = "*"
+  destination_address_prefixes = var.vnet_cidrs
+  destination_port_range       = "20000-32000"
+}
+
 // application - control plane
 resource "azurerm_application_security_group" "control_plane" {
   location            = var.location
