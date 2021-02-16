@@ -2,7 +2,7 @@
 vault_endpoint  = "https://vault.${prefix}.${external_domain}"
 consul_endpoint = "https://consul.${prefix}.${external_domain}"
 nomad_endpoint  = "https://nomad.${prefix}.${external_domain}"
-domain          = "${external_domain}"
+domain          = "${prefix}.${external_domain}"
 
 %{ if use_le_staging ~}
 vault_skip_tls_verify = true

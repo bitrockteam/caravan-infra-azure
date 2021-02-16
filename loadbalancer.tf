@@ -29,9 +29,10 @@ locals {
   ag_probe_vault      = "${var.prefix}-probe-vault"
   ag_probe_consul     = "${var.prefix}-probe-consul"
   ag_probe_nomad      = "${var.prefix}-probe-nomad"
+  ag_probe_ingress    = "${var.prefix}-probe-ingress"
   ag_ssl_cert_name    = "${var.prefix}-ssl-cert"
 
-  ag_worker_plane_apps = toset(["jenkins", "jaeger"])
+  ag_worker_plane_apps = toset(["jenkins", "jaeger", "faasd-gateway", "grafana-internal", "kibana"])
 }
 
 resource "azurerm_public_ip" "lb" {
@@ -86,12 +87,13 @@ resource "azurerm_application_gateway" "this" {
     request_timeout       = 30
   }
   backend_http_settings {
-    cookie_based_affinity = "Disabled"
-    name                  = local.ag_bhs_ingress
-    port                  = 8080
-    protocol              = "Http"
-    host_name             = "*.${var.prefix}.${var.external_domain}"
-    request_timeout       = 30
+    cookie_based_affinity               = "Disabled"
+    name                                = local.ag_bhs_ingress
+    port                                = 8080
+    protocol                            = "Http"
+    probe_name                          = local.ag_probe_ingress
+    pick_host_name_from_backend_address = false
+    request_timeout                     = 30
   }
 
   frontend_ip_configuration {
@@ -270,6 +272,20 @@ resource "azurerm_application_gateway" "this" {
     timeout                                   = 30
     unhealthy_threshold                       = 20
     pick_host_name_from_backend_http_settings = true
+  }
+
+  probe {
+    interval            = 10
+    name                = local.ag_probe_ingress
+    path                = "/"
+    port                = 8080
+    protocol            = "Http"
+    timeout             = 30
+    unhealthy_threshold = 20
+    host                = "localhost"
+    match {
+      status_code = ["200", "404"]
+    }
   }
 
   sku {
