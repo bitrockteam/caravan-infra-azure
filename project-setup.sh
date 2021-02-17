@@ -90,13 +90,14 @@ cat <<EOT > run.sh
 set -e
 
 EXTERNAL_DOMAIN="example.com" # replace
+CLOUD_NAME="azure"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 echo "Deploying infrastructure..."
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file azure.tfvars
+terraform apply -var-file ${CLOUD_NAME}.tfvars
 
 export VAULT_TOKEN=$(cat ".${PREFIX}-root_token")
 export VAULT_ADDR="https://vault.${PREFIX}.${EXTERNAL_DOMAIN}"
@@ -105,26 +106,26 @@ export NOMAD_TOKEN=$(vault read -tls-skip-verify -format=json nomad/creds/token-
 echo "Configuring platform..."
 
 cd "$DIR/../caravan-platform"
-cp "${PREFIX}-azure-backend.tf.bak "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-azure.tfvars"
+terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars"
 
 echo "Configuring application support..."
 
 cd "$DIR/../caravan-application-support"
-cp "${PREFIX}-azure-backend.tf.bak "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-azure.tfvars"
+terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars"
 
 echo "Configuring sample workload..."
 
 cd "$DIR/../caravan-workload"
-cp "${PREFIX}-azure-backend.tf.bak "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-azure.tfvars"
+terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars"
 
 cd "$DIR"
 
