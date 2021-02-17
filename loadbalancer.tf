@@ -32,7 +32,24 @@ locals {
   ag_probe_ingress    = "${var.prefix}-probe-ingress"
   ag_ssl_cert_name    = "${var.prefix}-ssl-cert"
 
-  ag_worker_plane_apps = toset(["jenkins", "jaeger", "faasd-gateway", "grafana-internal", "kibana"])
+  // FIXME: We cannot use a * listener to address traffic to Consul Ingress due to a missing feature in Application Gateway
+  // FIXME: We are not able to control the ordering of listeners in the AppGw, and as a result if * listener has
+  // FIXME: precedence over vault/consul/nomad listeners, we will not be able to reach control plane listeners
+  // FIXME: https://feedback.azure.com/forums/217313-networking/suggestions/33841291-reorder-the-listeners-on-the-application-gateway
+  // FIXME: As a workaround, we create one listener per application to expose. We could leverage the multi hostnames feature
+  // FIXME: of the http_listener but we are still limited at 5 different hostnames per listener.
+
+  ag_worker_plane_apps = toset([
+    "jenkins",
+    "jaeger",
+    "faasd-gateway",
+    "grafana-internal",
+    "kibana",
+    "prometheus",
+    "keycloak",
+    "waypoint",
+    "opentraced-app-b"
+  ])
 }
 
 resource "azurerm_public_ip" "lb" {
@@ -142,12 +159,17 @@ resource "azurerm_application_gateway" "this" {
     host_name                      = "nomad.${var.prefix}.${var.external_domain}"
     protocol                       = "Http"
   }
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_http
-    name                           = local.ag_hl_ingress
-    host_names                     = [for n in local.ag_worker_plane_apps : "${n}.${var.prefix}.${var.external_domain}"]
-    protocol                       = "Http"
+
+  dynamic "http_listener" {
+    for_each = local.ag_worker_plane_apps
+    iterator = app
+    content {
+      frontend_ip_configuration_name = local.ag_fi_public
+      frontend_port_name             = local.ag_fp_http
+      name                           = "${local.ag_hl_ingress}-${app.key}"
+      host_name                      = "${app.key}.${var.prefix}.${var.external_domain}"
+      protocol                       = "Http"
+    }
   }
 
   http_listener {
@@ -174,13 +196,17 @@ resource "azurerm_application_gateway" "this" {
     protocol                       = "Https"
     ssl_certificate_name           = local.ag_ssl_cert_name
   }
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_https
-    name                           = local.ag_hl_s_ingress
-    host_names                     = [for n in local.ag_worker_plane_apps : "${n}.${var.prefix}.${var.external_domain}"]
-    protocol                       = "Https"
-    ssl_certificate_name           = local.ag_ssl_cert_name
+  dynamic "http_listener" {
+    for_each = local.ag_worker_plane_apps
+    iterator = app
+    content {
+      frontend_ip_configuration_name = local.ag_fi_public
+      frontend_port_name             = local.ag_fp_https
+      name                           = "${local.ag_hl_s_ingress}-${app.key}"
+      host_name                      = "${app.key}.${var.prefix}.${var.external_domain}"
+      protocol                       = "Https"
+      ssl_certificate_name           = local.ag_ssl_cert_name
+    }
   }
 
   request_routing_rule {
@@ -204,12 +230,16 @@ resource "azurerm_application_gateway" "this" {
     backend_address_pool_name  = local.ag_bp_control_plane
     backend_http_settings_name = local.ag_bhs_nomad
   }
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_ingress
-    name                       = local.ag_rrr_ingress
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_worker_plane
-    backend_http_settings_name = local.ag_bhs_ingress
+  dynamic "request_routing_rule" {
+    for_each = local.ag_worker_plane_apps
+    iterator = app
+    content {
+      http_listener_name         = "${local.ag_hl_ingress}-${app.key}"
+      name                       = "${local.ag_rrr_ingress}-${app.key}"
+      rule_type                  = "Basic"
+      backend_address_pool_name  = local.ag_bp_worker_plane
+      backend_http_settings_name = local.ag_bhs_ingress
+    }
   }
 
   request_routing_rule {
@@ -233,12 +263,16 @@ resource "azurerm_application_gateway" "this" {
     backend_address_pool_name  = local.ag_bp_control_plane
     backend_http_settings_name = local.ag_bhs_nomad
   }
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_s_ingress
-    name                       = local.ag_rrr_s_ingress
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_worker_plane
-    backend_http_settings_name = local.ag_bhs_ingress
+  dynamic "request_routing_rule" {
+    for_each = local.ag_worker_plane_apps
+    iterator = app
+    content {
+      http_listener_name         = "${local.ag_hl_s_ingress}-${app.key}"
+      name                       = "${local.ag_rrr_s_ingress}-${app.key}"
+      rule_type                  = "Basic"
+      backend_address_pool_name  = local.ag_bp_worker_plane
+      backend_http_settings_name = local.ag_bhs_ingress
+    }
   }
 
   probe {
