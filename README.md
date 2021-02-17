@@ -62,8 +62,8 @@ terraform apply -var-file azure.tfvars
 | [azurerm_client_config](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/client_config) |
 | [azurerm_dns_a_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_a_record) |
 | [azurerm_dns_ns_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_ns_record) |
-| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_zone) |
 | [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/dns_zone) |
+| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_zone) |
 | [azurerm_image](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/image) |
 | [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault) |
 | [azurerm_key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault_access_policy) |
@@ -95,13 +95,13 @@ terraform apply -var-file azure.tfvars
 |------|-------------|------|---------|:--------:|
 | allowed\_ssh\_cidrs | The list of CIDRs from which ssh is allowed. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | app\_gateway\_subnet\_cidr | The CIDR of the subnet created for the Application Gateway instance. | `string` | `"10.0.2.0/24"` | no |
-| azure\_csi | Wheter to create an Azure Disk for Nomad Volume CSI testing. | `bool` | `true` | no |
 | ca\_certs | A group of certificate objects to download locally. This helps when using Let's Encrypt staging environment. | <pre>map(object({<br>    filename = string<br>    pemurl   = string<br>  }))</pre> | <pre>{<br>  "fakeleintermediatex1": {<br>    "filename": "fakeleintermediatex1.pem",<br>    "pemurl": "https://letsencrypt.org/certs/fakeleintermediatex1.pem"<br>  },<br>  "fakelerootx1": {<br>    "filename": "fakelerootx1.pem",<br>    "pemurl": "https://letsencrypt.org/certs/fakelerootx1.pem"<br>  }<br>}</pre> | no |
 | client\_id | The Azure Service Principal Client ID which should be used. | `string` | n/a | yes |
 | client\_secret | The Azure Service Principal Client Secret which should be used. | `string` | n/a | yes |
 | control\_plane\_disk\_size | The size of control plane instances disk. | `string` | `"40"` | no |
 | control\_plane\_instance\_count | The number of control plane instances. | `number` | `3` | no |
 | control\_plane\_size | The size of control plane instances. | `string` | `"Standard_B2s"` | no |
+| csi\_volumes | Example:<br>{<br>  "jenkins" : {<br>    "storage\_account\_type" : "Standard\_LRS"<br>    "disk\_size\_gb" : "30"<br>  }<br>} | `map(map(string))` | `{}` | no |
 | dc\_name | The Consul DC name. | `string` | `"azure-dc"` | no |
 | enable\_monitoring | Whether to create an additional instance for monitoring purposes. | `bool` | `true` | no |
 | external\_domain | The external domain to use for registering DNS names. | `string` | n/a | yes |
@@ -132,6 +132,7 @@ terraform apply -var-file azure.tfvars
 | appsupport\_tfvars | n/a |
 | control\_plane\_role\_name | n/a |
 | control\_plane\_service\_principal\_ids | n/a |
+| csi\_volumes | n/a |
 | ips | n/a |
 | platform\_backend | n/a |
 | platform\_tfvars | n/a |

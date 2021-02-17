@@ -25,7 +25,7 @@ locals {
     external_domain   = var.external_domain
     use_le_staging    = var.use_le_staging
     dc_name           = var.dc_name
-    jenkins_volume_id = var.azure_csi ? azurerm_managed_disk.jenkins[0].id : ""
+    jenkins_volume_id = lookup(local.volumes_name_to_id, "jenkins", "")
     tenant_id         = var.tenant_id
     subscription_id   = var.subscription_id
   })

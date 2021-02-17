@@ -145,11 +145,6 @@ variable "ca_certs" {
   }
   description = "A group of certificate objects to download locally. This helps when using Let's Encrypt staging environment."
 }
-variable "azure_csi" {
-  type        = bool
-  default     = true
-  description = "Wheter to create an Azure Disk for Nomad Volume CSI testing."
-}
 variable "image_resource_group_name" {
   type        = string
   description = "The Azure Resource Group name where Caravan images are available."
@@ -158,6 +153,19 @@ variable "vault_auth_resource" {
   type        = string
   default     = "https://management.azure.com/"
   description = "The Azure AD application to use for generating access tokens."
+}
+variable "csi_volumes" {
+  type        = map(map(string))
+  default     = {}
+  description = <<EOF
+Example:
+{
+  "jenkins" : {
+    "storage_account_type" : "Standard_LRS"
+    "disk_size_gb" : "30"
+  }
+}
+EOF
 }
 
 variable "tags" {
