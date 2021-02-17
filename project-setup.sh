@@ -131,7 +131,11 @@ cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 terraform init -reconfigure -upgrade
 terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars" -auto-approve
 
-sleep 30
+echo "Waiting for Consul Connect to be ready..."
+while [ $(curl -k --silent --output /dev/null --write-out "%{http_code}" "\${CONSUL_ADDR}/v1/connect/ca/roots") != "200" ]; do
+  echo "Waiting for Consul Connect to be ready..."
+  sleep 5
+done
 
 echo "Configuring application support..."
 
