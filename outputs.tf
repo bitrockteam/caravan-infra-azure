@@ -63,3 +63,7 @@ output "ips" {
     monitoring    = { for n in azurerm_linux_virtual_machine.monitoring : n.name => n.public_ip_address }
   }
 }
+
+output "csi_volumes" {
+  value = local.volumes_name_to_id
+}
