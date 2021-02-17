@@ -91,74 +91,119 @@ set -e
 
 EXTERNAL_DOMAIN="example.com" # replace
 CLOUD_NAME="azure"
-export VAULT_ADDR="https://vault.${PREFIX}.${EXTERNAL_DOMAIN}"
-export CONSUL_ADDR="https://consul.${PREFIX}.${EXTERNAL_DOMAIN}"
-export NOMAD_ADDR="https://nomad.${PREFIX}.${EXTERNAL_DOMAIN}"
+export VAULT_ADDR="https://vault.${PREFIX}.\${EXTERNAL_DOMAIN}"
+export CONSUL_ADDR="https://consul.${PREFIX}.\${EXTERNAL_DOMAIN}"
+export NOMAD_ADDR="https://nomad.${PREFIX}.\${EXTERNAL_DOMAIN}"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 echo "Deploying infrastructure..."
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file ${CLOUD_NAME}.tfvars
+terraform apply -var-file ${CLOUD_NAME}.tfvars -auto-approve
 
 export VAULT_TOKEN=$(cat ".${PREFIX}-root_token")
 export NOMAD_TOKEN=$(vault read -tls-skip-verify -format=json nomad/creds/token-manager | jq -r .data.secret_id)
 
-echo "Waiting for Vault to be up..."
-vault_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${VAULT_ADDR}/v1/sys/leader") || vault_up=""
-while [ $(curl --silent --output /dev/null --write-out "%{http_code}" "${VAULT_ADDR}/v1/sys/leader") != "200" ]; do
+echo "Waiting for Vault \${VAULT_ADDR} to be up..."
+while [ $(curl -k --silent --output /dev/null --write-out "%{http_code}" "\${VAULT_ADDR}/v1/sys/leader") != "200" ]; do
   echo "Waiting for Vault to be up..."
   sleep 5
-  vault_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${VAULT_ADDR}/v1/status/leader") || vault_up=""
 done
 
-echo "Waiting for Consul to be up..."
-consul_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${CONSUL_ADDR}/v1/status/leader") || consul_up=""
-while [ $(curl --silent --output /dev/null --write-out "%{http_code}" "${CONSUL_ADDR}/v1/status/leader") != "200" ]; do
+echo "Waiting for Consul \${CONSUL_ADDR} to be up..."
+while [ $(curl -k --silent --output /dev/null --write-out "%{http_code}" "\${CONSUL_ADDR}/v1/status/leader") != "200" ]; do
   echo "Waiting for Consul to be up..."
   sleep 5
-  consul_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${CONSUL_ADDR}/v1/status/leader") || consul_up=""
 done
 
-echo "Waiting for Nomad to be up..."
-nomad_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${NOMAD_ADDR}/v1/status/leader") || nomad_up=""
-while [ $(curl --silent --output /dev/null --write-out "%{http_code}" "${NOMAD_ADDR}/v1/status/leader") != "200" ]; do
+echo "Waiting for Nomad \${NOMAD_ADDR} to be up..."
+while [ $(curl -k --silent --output /dev/null --write-out "%{http_code}" "\${NOMAD_ADDR}/v1/status/leader") != "200" ]; do
   echo "Waiting for Nomad to be up..."
   sleep 5
-  nomad_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${NOMAD_ADDR}/v1/status/leader") || nomad_up=""
 done
 
 echo "Configuring platform..."
 
 cd "$DIR/../caravan-platform"
-cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak "backend.tf"
+cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars"
+terraform apply -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+
+sleep 30
 
 echo "Configuring application support..."
 
 cd "$DIR/../caravan-application-support"
-cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak "backend.tf"
+cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars"
+terraform apply -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
 
 echo "Configuring sample workload..."
 
 cd "$DIR/../caravan-workload"
-cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak "backend.tf"
+cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars"
+terraform apply -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
 
 cd "$DIR"
 
 echo "Done."
+EOT
 
+cat <<EOT > destroy.sh
+#!/usr/bin/env bash
+set -e
+
+EXTERNAL_DOMAIN="example.com" # replace
+CLOUD_NAME="azure"
+export VAULT_ADDR="https://vault.${PREFIX}.\${EXTERNAL_DOMAIN}"
+export CONSUL_ADDR="https://consul.${PREFIX}.\${EXTERNAL_DOMAIN}"
+export NOMAD_ADDR="https://nomad.${PREFIX}.\${EXTERNAL_DOMAIN}"
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+export VAULT_TOKEN=$(cat ".${PREFIX}-root_token")
+export NOMAD_TOKEN=$(vault read -tls-skip-verify -format=json nomad/creds/token-manager | jq -r .data.secret_id)
+
+echo "Destroying sample workload..."
+
+cd "$DIR/../caravan-workload"
+cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+
+terraform init -reconfigure -upgrade
+terraform destroy -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+
+echo "Destroying application support..."
+
+cd "$DIR/../caravan-application-support"
+cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+
+terraform init -reconfigure -upgrade
+terraform destroy -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+
+echo "Destroying platform..."
+
+cd "$DIR/../caravan-platform"
+cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+
+terraform init -reconfigure -upgrade
+terraform destroy -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+
+echo "Destroying infrastructure..."
+
+cd "$DIR"
+
+terraform init -reconfigure -upgrade
+terraform apply -var-file ${CLOUD_NAME}.tfvars -auto-approve
+
+echo "Done."
 EOT
 
 chmod +x run.sh
+chmod +x destroy.sh
 
-echo "All set, review and run 'run.sh'"
+echo "All set, review configs and execute 'run.sh' and 'destroy.sh'. Enjoy!."
