@@ -175,3 +175,5 @@ files/*.jar
 files/echo-server
 *.pem
 state.json
+run.sh
+destroy.sh
