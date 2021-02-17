@@ -91,6 +91,9 @@ set -e
 
 EXTERNAL_DOMAIN="example.com" # replace
 CLOUD_NAME="azure"
+export VAULT_ADDR="https://vault.${PREFIX}.${EXTERNAL_DOMAIN}"
+export CONSUL_ADDR="https://consul.${PREFIX}.${EXTERNAL_DOMAIN}"
+export NOMAD_ADDR="https://nomad.${PREFIX}.${EXTERNAL_DOMAIN}"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -100,8 +103,31 @@ terraform init -reconfigure -upgrade
 terraform apply -var-file ${CLOUD_NAME}.tfvars
 
 export VAULT_TOKEN=$(cat ".${PREFIX}-root_token")
-export VAULT_ADDR="https://vault.${PREFIX}.${EXTERNAL_DOMAIN}"
 export NOMAD_TOKEN=$(vault read -tls-skip-verify -format=json nomad/creds/token-manager | jq -r .data.secret_id)
+
+echo "Waiting for Vault to be up..."
+vault_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${VAULT_ADDR}/v1/sys/leader") || vault_up=""
+while [ $(curl --silent --output /dev/null --write-out "%{http_code}" "${VAULT_ADDR}/v1/sys/leader") != "200" ]; do
+  echo "Waiting for Vault to be up..."
+  sleep 5
+  vault_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${VAULT_ADDR}/v1/status/leader") || vault_up=""
+done
+
+echo "Waiting for Consul to be up..."
+consul_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${CONSUL_ADDR}/v1/status/leader") || consul_up=""
+while [ $(curl --silent --output /dev/null --write-out "%{http_code}" "${CONSUL_ADDR}/v1/status/leader") != "200" ]; do
+  echo "Waiting for Consul to be up..."
+  sleep 5
+  consul_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${CONSUL_ADDR}/v1/status/leader") || consul_up=""
+done
+
+echo "Waiting for Nomad to be up..."
+nomad_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${NOMAD_ADDR}/v1/status/leader") || nomad_up=""
+while [ $(curl --silent --output /dev/null --write-out "%{http_code}" "${NOMAD_ADDR}/v1/status/leader") != "200" ]; do
+  echo "Waiting for Nomad to be up..."
+  sleep 5
+  nomad_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "${NOMAD_ADDR}/v1/status/leader") || nomad_up=""
+done
 
 echo "Configuring platform..."
 
