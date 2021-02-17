@@ -10,6 +10,7 @@ RANDOM_STRING=$(openssl rand -hex 3)
 RESOURCE_GROUP=${PREFIX}-rg
 STORAGE_ACCOUNT=${PREFIX}${RANDOM_STRING}
 CONTAINER_NAME=tfstate
+CLOUD_NAME=azure
 
 az account set --subscription="$SUBSCRIPTION_ID"
 
@@ -90,7 +91,6 @@ cat <<EOT > run.sh
 set -e
 
 EXTERNAL_DOMAIN="example.com" # replace
-CLOUD_NAME="azure"
 export VAULT_ADDR="https://vault.${PREFIX}.\${EXTERNAL_DOMAIN}"
 export CONSUL_ADDR="https://consul.${PREFIX}.\${EXTERNAL_DOMAIN}"
 export NOMAD_ADDR="https://nomad.${PREFIX}.\${EXTERNAL_DOMAIN}"
@@ -126,28 +126,28 @@ done
 echo "Configuring platform..."
 
 cd "$DIR/../caravan-platform"
-cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars" -auto-approve
 
 sleep 30
 
 echo "Configuring application support..."
 
 cd "$DIR/../caravan-application-support"
-cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars" -auto-approve
 
 echo "Configuring sample workload..."
 
 cd "$DIR/../caravan-workload"
-cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform apply -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+terraform apply -var-file "${PREFIX}-${CLOUD_NAME}.tfvars" -auto-approve
 
 cd "$DIR"
 
@@ -159,7 +159,6 @@ cat <<EOT > destroy.sh
 set -e
 
 EXTERNAL_DOMAIN="example.com" # replace
-CLOUD_NAME="azure"
 export VAULT_ADDR="https://vault.${PREFIX}.\${EXTERNAL_DOMAIN}"
 export CONSUL_ADDR="https://consul.${PREFIX}.\${EXTERNAL_DOMAIN}"
 export NOMAD_ADDR="https://nomad.${PREFIX}.\${EXTERNAL_DOMAIN}"
@@ -172,26 +171,26 @@ export NOMAD_TOKEN=$(vault read -tls-skip-verify -format=json nomad/creds/token-
 echo "Destroying sample workload..."
 
 cd "$DIR/../caravan-workload"
-cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform destroy -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+terraform destroy -var-file "${PREFIX}-${CLOUD_NAME}.tfvars" -auto-approve
 
 echo "Destroying application support..."
 
 cd "$DIR/../caravan-application-support"
-cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform destroy -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+terraform destroy -var-file "${PREFIX}-${CLOUD_NAME}.tfvars" -auto-approve
 
 echo "Destroying platform..."
 
 cd "$DIR/../caravan-platform"
-cp "${PREFIX}-\${CLOUD_NAME}-backend.tf.bak" "backend.tf"
+cp "${PREFIX}-${CLOUD_NAME}-backend.tf.bak" "backend.tf"
 
 terraform init -reconfigure -upgrade
-terraform destroy -var-file "${PREFIX}-\${CLOUD_NAME}.tfvars" -auto-approve
+terraform destroy -var-file "${PREFIX}-${CLOUD_NAME}.tfvars" -auto-approve
 
 echo "Destroying infrastructure..."
 
