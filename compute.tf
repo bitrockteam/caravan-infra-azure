@@ -128,7 +128,8 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
   source_image_id = data.azurerm_image.caravan.id
 
   identity {
-    type = "SystemAssigned"
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.control_plane.id]
   }
   tags = var.tags
 }
@@ -171,7 +172,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
   source_image_id = data.azurerm_image.caravan.id
 
   identity {
-    type = "SystemAssigned"
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.worker_plane.id]
   }
 
   tags = var.tags
@@ -202,7 +204,8 @@ resource "azurerm_linux_virtual_machine" "monitoring" {
   source_image_id = data.azurerm_image.caravan.id
 
   identity {
-    type = "SystemAssigned"
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.worker_plane.id]
   }
   tags = var.tags
 }
