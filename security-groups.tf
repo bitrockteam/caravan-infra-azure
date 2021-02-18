@@ -123,6 +123,23 @@ resource "azurerm_network_security_rule" "allow_in_lb" {
     4646
   ]
 }
+resource "azurerm_network_security_rule" "allow_in_lb_2" {
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = "${var.prefix}-allow-in-from-lb-2"
+  network_security_group_name = azurerm_network_security_group.default.name
+  priority                    = 507
+  protocol                    = "tcp"
+  resource_group_name         = var.resource_group_name
+  source_address_prefix       = "AzureLoadBalancer"
+  source_port_range           = "*"
+  destination_application_security_group_ids = [
+    azurerm_application_security_group.worker_plane.id
+  ]
+  destination_port_ranges = [
+    8080,
+  ]
+}
 
 resource "azurerm_network_security_rule" "lb_default_rules" {
   access                      = "Allow"
@@ -133,6 +150,20 @@ resource "azurerm_network_security_rule" "lb_default_rules" {
   protocol                    = "tcp"
   resource_group_name         = var.resource_group_name
   source_address_prefix       = "GatewayManager"
+  source_port_range           = "*"
+  destination_address_prefix  = "*"
+  destination_port_range      = "65200-65535"
+}
+
+resource "azurerm_network_security_rule" "lb_default_rules-2" {
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = "${var.prefix}-allow-in-internet-to-loadbalancer-2"
+  network_security_group_name = azurerm_network_security_group.app_gateway.name
+  priority                    = 506
+  protocol                    = "tcp"
+  resource_group_name         = var.resource_group_name
+  source_address_prefix       = "Internet"
   source_port_range           = "*"
   destination_address_prefix  = "*"
   destination_port_range      = "65200-65535"

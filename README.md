@@ -30,14 +30,12 @@ terraform apply -var-file azure.tfvars
 | Name | Version |
 |------|---------|
 | terraform | ~> 0.13.1 |
-| azuread | ~> 1.3.0 |
 | azurerm | ~> 2.46.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| azuread | ~> 1.3.0 |
 | azurerm | ~> 2.46.1 |
 | local | n/a |
 | null | n/a |
@@ -56,14 +54,13 @@ terraform apply -var-file azure.tfvars
 
 | Name |
 |------|
-| [azuread_service_principal](https://registry.terraform.io/providers/hashicorp/azuread/1.3.0/docs/data-sources/service_principal) |
 | [azurerm_application_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/application_gateway) |
 | [azurerm_application_security_group](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/application_security_group) |
 | [azurerm_client_config](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/client_config) |
 | [azurerm_dns_a_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_a_record) |
 | [azurerm_dns_ns_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_ns_record) |
-| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/dns_zone) |
 | [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_zone) |
+| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/dns_zone) |
 | [azurerm_image](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/image) |
 | [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault) |
 | [azurerm_key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault_access_policy) |
@@ -84,6 +81,7 @@ terraform apply -var-file azure.tfvars
 | [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/subnet) |
 | [azurerm_subnet_network_security_group_association](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/subnet_network_security_group_association) |
 | [azurerm_subscription](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/subscription) |
+| [azurerm_user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/user_assigned_identity) |
 | [azurerm_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/virtual_network) |
 | [local_file](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) |
 | [null_resource](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) |
@@ -105,6 +103,7 @@ terraform apply -var-file azure.tfvars
 | dc\_name | The Consul DC name. | `string` | `"azure-dc"` | no |
 | enable\_monitoring | Whether to create an additional instance for monitoring purposes. | `bool` | `true` | no |
 | external\_domain | The external domain to use for registering DNS names. | `string` | n/a | yes |
+| image\_name\_regex | The Azure Compute image name regex | `string` | `"caravan-centos-image-*"` | no |
 | image\_resource\_group\_name | The Azure Resource Group name where Caravan images are available. | `string` | n/a | yes |
 | location | The Azure location where to create resources. | `string` | n/a | yes |
 | monitoring\_disk\_size | The size of monitoring instance disk. | `string` | `"40"` | no |

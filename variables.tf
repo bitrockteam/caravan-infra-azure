@@ -149,6 +149,11 @@ variable "image_resource_group_name" {
   type        = string
   description = "The Azure Resource Group name where Caravan images are available."
 }
+variable "image_name_regex" {
+  type        = string
+  default     = "caravan-centos-image-*"
+  description = "The Azure Compute image name regex"
+}
 variable "vault_auth_resource" {
   type        = string
   default     = "https://management.azure.com/"

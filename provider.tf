@@ -6,7 +6,3 @@ provider "azurerm" {
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
 }
-
-provider "azuread" {
-  version = "~> 1.3.0"
-}
