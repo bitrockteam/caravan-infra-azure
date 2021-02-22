@@ -72,3 +72,11 @@ output "vault_client_id" {
 output "vault_client_secret" {
   value = azuread_application_password.vault.value
 }
+
+output "zzz_vault_ad_app" {
+  value = <<EOT
+In order to complete the setup of Vault AD Application permissions, you need to run as a Global administrator:
+`az ad app permission grant --id "${azuread_application.vault.application_id}" --api 00000002-0000-0000-c000-000000000000`
+or open `https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/CallAnAPI/appId/${azuread_application.vault.application_id}/isMSAApp/` and grant admin consent
+EOT
+}

@@ -152,4 +152,5 @@ terraform apply -var-file azure.tfvars
 | worker\_plane\_service\_principal\_ids | n/a |
 | workload\_backend | n/a |
 | workload\_tfvars | n/a |
+| zzz\_vault\_ad\_app | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
