@@ -16,3 +16,5 @@ data "azurerm_image" "caravan" {
 }
 
 data "azurerm_subscription" "this" {}
+
+data "azuread_client_config" "this" {}

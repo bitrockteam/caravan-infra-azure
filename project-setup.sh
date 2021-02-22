@@ -35,6 +35,15 @@ CLIENT_ID=$(echo "$SERVICE_PRINCIPAL" | jq -r ".appId")
 CLIENT_SECRET=$(echo "$SERVICE_PRINCIPAL" | jq -r ".password")
 TENANT_ID=$(echo "$SERVICE_PRINCIPAL" | jq -r ".tenant")
 
+# Grant Application.ReadWrite.All
+az ad app permission add --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000 --api-permissions 1cda74f2-2616-4834-b122-5cb1b07f8a59=Role
+# Grant User.Read
+az ad app permission add --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000 --api-permissions 311a71cc-e848-46a1-bdf8-97ff7156d8e6=Scope
+# Grant Directory.ReadWrite.All
+az ad app permission add --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000 --api-permissions 78c8a3c8-a07e-4b9e-af1b-b5ccab50a175=Role
+# Apply changes
+az ad app permission grant --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000
+
 # Allow access for Terraform backend operations
 az role assignment create \
   --scope "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
@@ -43,7 +52,7 @@ az role assignment create \
 
 # Allow assigning permissions to other entities
 az role assignment create \
-  --scope "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
+  --scope "/subscriptions/${SUBSCRIPTION_ID}" \
   --role "User Access Administrator" \
   --assignee "$CLIENT_ID"
 

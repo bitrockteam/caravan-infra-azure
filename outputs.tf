@@ -64,3 +64,11 @@ output "ips" {
 output "csi_volumes" {
   value = local.volumes_name_to_id
 }
+
+output "vault_client_id" {
+  value = azuread_application.vault.application_id
+}
+
+output "vault_client_secret" {
+  value = azuread_application_password.vault.value
+}

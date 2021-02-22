@@ -135,12 +135,12 @@ variable "ca_certs" {
   }))
   default = {
     fakeleintermediatex1 = {
-      filename = "fakeleintermediatex1.pem"
-      pemurl   = "https://letsencrypt.org/certs/fakeleintermediatex1.pem"
+      filename = "letsencrypt-stg-root-x1.pem"
+      pemurl   = "https://letsencrypt.org/certs/staging/letsencrypt-stg-root-x1.pem"
     },
     fakelerootx1 = {
-      filename = "fakelerootx1.pem"
-      pemurl   = "https://letsencrypt.org/certs/fakelerootx1.pem"
+      filename = "letsencrypt-stg-int-r3.pem"
+      pemurl   = "https://letsencrypt.org/certs/staging/letsencrypt-stg-int-r3.pem"
     }
   }
   description = "A group of certificate objects to download locally. This helps when using Let's Encrypt staging environment."
