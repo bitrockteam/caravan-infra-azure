@@ -149,6 +149,18 @@ resource "azurerm_application_gateway" "this" {
   }
 
   dynamic "http_listener" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      frontend_ip_configuration_name = local.ag_fi_private
+      frontend_port_name             = local.ag_fp_http
+      protocol                       = "Http"
+      name                           = "${local.ag_hl}-internal-${app.key}"
+      host_name                      = "${app.key}-internal.${var.prefix}.${var.external_domain}"
+    }
+  }
+
+  dynamic "http_listener" {
     for_each = local.ag_worker_plane_apps
     iterator = app
     content {
@@ -169,6 +181,19 @@ resource "azurerm_application_gateway" "this" {
       protocol                       = "Https"
       name                           = "${local.ag_hl_s}-${app.key}"
       host_name                      = "${app.key}.${var.prefix}.${var.external_domain}"
+      ssl_certificate_name           = local.ag_ssl_cert_name
+    }
+  }
+
+  dynamic "http_listener" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      frontend_ip_configuration_name = local.ag_fi_private
+      frontend_port_name             = local.ag_fp_http
+      protocol                       = "Https"
+      name                           = "${local.ag_hl_s}-internal-${app.key}"
+      host_name                      = "${app.key}-internal.${var.prefix}.${var.external_domain}"
       ssl_certificate_name           = local.ag_ssl_cert_name
     }
   }
@@ -199,6 +224,18 @@ resource "azurerm_application_gateway" "this" {
   }
 
   dynamic "request_routing_rule" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      http_listener_name         = "${local.ag_hl}-internal-${app.key}"
+      name                       = "${local.ag_rrr}-internal-${app.key}"
+      rule_type                  = "Basic"
+      backend_address_pool_name  = local.ag_bp_control_plane
+      backend_http_settings_name = "${local.ag_bhs}-${app.key}"
+    }
+  }
+
+  dynamic "request_routing_rule" {
     for_each = local.ag_worker_plane_apps
     iterator = app
     content {
@@ -216,6 +253,18 @@ resource "azurerm_application_gateway" "this" {
     content {
       http_listener_name         = "${local.ag_hl}-${app.key}"
       name                       = "${local.ag_rrr_s}-${app.key}"
+      rule_type                  = "Basic"
+      backend_address_pool_name  = local.ag_bp_control_plane
+      backend_http_settings_name = "${local.ag_bhs}-${app.key}"
+    }
+  }
+
+  dynamic "request_routing_rule" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      http_listener_name         = "${local.ag_hl}-internal-${app.key}"
+      name                       = "${local.ag_rrr_s}-internal-${app.key}"
       rule_type                  = "Basic"
       backend_address_pool_name  = local.ag_bp_control_plane
       backend_http_settings_name = "${local.ag_bhs}-${app.key}"
