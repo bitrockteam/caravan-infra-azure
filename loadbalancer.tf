@@ -1,31 +1,24 @@
 locals {
   ag_bp_control_plane = "${var.prefix}-backend-pool-control-plane"
   ag_bp_worker_plane  = "${var.prefix}-backend-pool-worker-plane"
-  ag_bhs_vault        = "${var.prefix}-backend-vault"
-  ag_bhs_consul       = "${var.prefix}-backend-consul"
-  ag_bhs_nomad        = "${var.prefix}-backend-nomad"
-  ag_bhs_ingress      = "${var.prefix}-backend-ingress"
+  ag_bhs              = "${var.prefix}-backend"
+  ag_bhs_vault        = "${local.ag_bhs}-vault"
+  ag_bhs_consul       = "${local.ag_bhs}-consul"
+  ag_bhs_nomad        = "${local.ag_bhs}-nomad"
+  ag_bhs_ingress      = "${local.ag_bhs}-ingress"
   ag_fi_public        = "${var.prefix}-frontend-ip-public"
   ag_fi_private       = "${var.prefix}-frontend-ip-private"
   ag_fp_http          = "${var.prefix}-port-http"
   ag_fp_https         = "${var.prefix}-port-https"
   ag_gateway_ip       = "${var.prefix}-app-gateway-ip-config"
-  ag_hl_vault         = "${var.prefix}-listener-http-vault"
-  ag_hl_consul        = "${var.prefix}-listener-http-consul"
-  ag_hl_nomad         = "${var.prefix}-listener-http-nomad"
-  ag_hl_ingress       = "${var.prefix}-listener-http-ingress"
-  ag_hl_s_vault       = "${var.prefix}-listener-https-vault"
-  ag_hl_s_consul      = "${var.prefix}-listener-https-consul"
-  ag_hl_s_nomad       = "${var.prefix}-listener-https-nomad"
-  ag_hl_s_ingress     = "${var.prefix}-listener-https-ingress"
-  ag_rrr_vault        = "${var.prefix}-http-routing-vault"
-  ag_rrr_consul       = "${var.prefix}-http-routing-consul"
-  ag_rrr_nomad        = "${var.prefix}-http-routing-nomad"
-  ag_rrr_ingress      = "${var.prefix}-http-routing-ingress"
-  ag_rrr_s_vault      = "${var.prefix}-https-routing-vault"
-  ag_rrr_s_consul     = "${var.prefix}-https-routing-consul"
-  ag_rrr_s_nomad      = "${var.prefix}-https-routing-nomad"
-  ag_rrr_s_ingress    = "${var.prefix}-https-routing-ingress"
+  ag_hl               = "${var.prefix}-listener-http"
+  ag_hl_s             = "${var.prefix}-listener-https"
+  ag_hl_ingress       = "${local.ag_hl}-ingress"
+  ag_hl_s_ingress     = "${local.ag_hl_s}-ingress"
+  ag_rrr              = "${var.prefix}-http-routing"
+  ag_rrr_ingress      = "${local.ag_rrr}-ingress"
+  ag_rrr_s            = "${var.prefix}-https-routing"
+  ag_rrr_s_ingress    = "${local.ag_rrr_s}-ingress"
   ag_probe_vault      = "${var.prefix}-probe-vault"
   ag_probe_consul     = "${var.prefix}-probe-consul"
   ag_probe_nomad      = "${var.prefix}-probe-nomad"
@@ -49,6 +42,11 @@ locals {
     "keycloak",
     "waypoint",
     "opentraced-app-b"
+  ])
+  ag_control_plane_apps = toset([
+    "vault",
+    "consul",
+    "nomad"
   ])
 }
 
@@ -138,26 +136,16 @@ resource "azurerm_application_gateway" "this" {
     subnet_id = azurerm_subnet.app_gateway.id
   }
 
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_http
-    name                           = local.ag_hl_vault
-    host_name                      = "vault.${var.prefix}.${var.external_domain}"
-    protocol                       = "Http"
-  }
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_http
-    name                           = local.ag_hl_consul
-    host_name                      = "consul.${var.prefix}.${var.external_domain}"
-    protocol                       = "Http"
-  }
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_http
-    name                           = local.ag_hl_nomad
-    host_name                      = "nomad.${var.prefix}.${var.external_domain}"
-    protocol                       = "Http"
+  dynamic "http_listener" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      frontend_ip_configuration_name = local.ag_fi_public
+      frontend_port_name             = local.ag_fp_http
+      protocol                       = "Http"
+      name                           = "${local.ag_hl}-${app.key}"
+      host_name                      = "${app.key}.${var.prefix}.${var.external_domain}"
+    }
   }
 
   dynamic "http_listener" {
@@ -172,30 +160,19 @@ resource "azurerm_application_gateway" "this" {
     }
   }
 
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_https
-    name                           = local.ag_hl_s_vault
-    host_name                      = "vault.${var.prefix}.${var.external_domain}"
-    protocol                       = "Https"
-    ssl_certificate_name           = local.ag_ssl_cert_name
+  dynamic "http_listener" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      frontend_ip_configuration_name = local.ag_fi_public
+      frontend_port_name             = local.ag_fp_http
+      protocol                       = "Https"
+      name                           = "${local.ag_hl_s}-${app.key}"
+      host_name                      = "${app.key}.${var.prefix}.${var.external_domain}"
+      ssl_certificate_name           = local.ag_ssl_cert_name
+    }
   }
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_https
-    name                           = local.ag_hl_s_consul
-    host_name                      = "consul.${var.prefix}.${var.external_domain}"
-    protocol                       = "Https"
-    ssl_certificate_name           = local.ag_ssl_cert_name
-  }
-  http_listener {
-    frontend_ip_configuration_name = local.ag_fi_public
-    frontend_port_name             = local.ag_fp_https
-    name                           = local.ag_hl_s_nomad
-    host_name                      = "nomad.${var.prefix}.${var.external_domain}"
-    protocol                       = "Https"
-    ssl_certificate_name           = local.ag_ssl_cert_name
-  }
+
   dynamic "http_listener" {
     for_each = local.ag_worker_plane_apps
     iterator = app
@@ -209,27 +186,18 @@ resource "azurerm_application_gateway" "this" {
     }
   }
 
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_vault
-    name                       = local.ag_rrr_vault
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_control_plane
-    backend_http_settings_name = local.ag_bhs_vault
+  dynamic "request_routing_rule" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      http_listener_name         = "${local.ag_hl}-${app.key}"
+      name                       = "${local.ag_rrr}-${app.key}"
+      rule_type                  = "Basic"
+      backend_address_pool_name  = local.ag_bp_control_plane
+      backend_http_settings_name = "${local.ag_bhs}-${app.key}"
+    }
   }
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_consul
-    name                       = local.ag_rrr_consul
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_control_plane
-    backend_http_settings_name = local.ag_bhs_consul
-  }
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_nomad
-    name                       = local.ag_rrr_nomad
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_control_plane
-    backend_http_settings_name = local.ag_bhs_nomad
-  }
+
   dynamic "request_routing_rule" {
     for_each = local.ag_worker_plane_apps
     iterator = app
@@ -242,27 +210,18 @@ resource "azurerm_application_gateway" "this" {
     }
   }
 
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_s_vault
-    name                       = local.ag_rrr_s_vault
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_control_plane
-    backend_http_settings_name = local.ag_bhs_vault
+  dynamic "request_routing_rule" {
+    for_each = local.ag_control_plane_apps
+    iterator = app
+    content {
+      http_listener_name         = "${local.ag_hl}-${app.key}"
+      name                       = "${local.ag_rrr_s}-${app.key}"
+      rule_type                  = "Basic"
+      backend_address_pool_name  = local.ag_bp_control_plane
+      backend_http_settings_name = "${local.ag_bhs}-${app.key}"
+    }
   }
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_s_consul
-    name                       = local.ag_rrr_s_consul
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_control_plane
-    backend_http_settings_name = local.ag_bhs_consul
-  }
-  request_routing_rule {
-    http_listener_name         = local.ag_hl_s_nomad
-    name                       = local.ag_rrr_s_nomad
-    rule_type                  = "Basic"
-    backend_address_pool_name  = local.ag_bp_control_plane
-    backend_http_settings_name = local.ag_bhs_nomad
-  }
+
   dynamic "request_routing_rule" {
     for_each = local.ag_worker_plane_apps
     iterator = app
