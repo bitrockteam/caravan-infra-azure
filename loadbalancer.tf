@@ -177,7 +177,7 @@ resource "azurerm_application_gateway" "this" {
     iterator = app
     content {
       frontend_ip_configuration_name = local.ag_fi_public
-      frontend_port_name             = local.ag_fp_http
+      frontend_port_name             = local.ag_fp_https
       protocol                       = "Https"
       name                           = "${local.ag_hl_s}-${app.key}"
       host_name                      = "${app.key}.${var.prefix}.${var.external_domain}"
@@ -190,7 +190,7 @@ resource "azurerm_application_gateway" "this" {
     iterator = app
     content {
       frontend_ip_configuration_name = local.ag_fi_private
-      frontend_port_name             = local.ag_fp_http
+      frontend_port_name             = local.ag_fp_https
       protocol                       = "Https"
       name                           = "${local.ag_hl_s}-internal-${app.key}"
       host_name                      = "${app.key}-internal.${var.prefix}.${var.external_domain}"
@@ -251,7 +251,7 @@ resource "azurerm_application_gateway" "this" {
     for_each = local.ag_control_plane_apps
     iterator = app
     content {
-      http_listener_name         = "${local.ag_hl}-${app.key}"
+      http_listener_name         = "${local.ag_hl_s}-${app.key}"
       name                       = "${local.ag_rrr_s}-${app.key}"
       rule_type                  = "Basic"
       backend_address_pool_name  = local.ag_bp_control_plane
@@ -263,7 +263,7 @@ resource "azurerm_application_gateway" "this" {
     for_each = local.ag_control_plane_apps
     iterator = app
     content {
-      http_listener_name         = "${local.ag_hl}-internal-${app.key}"
+      http_listener_name         = "${local.ag_hl_s}-internal-${app.key}"
       name                       = "${local.ag_rrr_s}-internal-${app.key}"
       rule_type                  = "Basic"
       backend_address_pool_name  = local.ag_bp_control_plane
