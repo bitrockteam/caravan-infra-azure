@@ -22,3 +22,5 @@ azure_bootstrap_client_id            = "${client_id}"
 azure_bootstrap_client_secret        = "${client_secret}"
 azure_bootstrap_tenant_id            = "${tenant_id}"
 azure_bootstrap_subscription_id      = "${subscription_id}"
+
+azure_csi = true

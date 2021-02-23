@@ -36,9 +36,11 @@ terraform apply -var-file azure.tfvars
 
 | Name | Version |
 |------|---------|
+| azuread | n/a |
 | azurerm | ~> 2.46.1 |
 | local | n/a |
 | null | n/a |
+| random | n/a |
 | tls | n/a |
 
 ## Modules
@@ -54,13 +56,17 @@ terraform apply -var-file azure.tfvars
 
 | Name |
 |------|
+| [azuread_application](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application) |
+| [azuread_application_password](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_password) |
+| [azuread_client_config](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/client_config) |
+| [azuread_service_principal](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal) |
 | [azurerm_application_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/application_gateway) |
 | [azurerm_application_security_group](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/application_security_group) |
 | [azurerm_client_config](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/client_config) |
 | [azurerm_dns_a_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_a_record) |
 | [azurerm_dns_ns_record](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_ns_record) |
-| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_zone) |
 | [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/dns_zone) |
+| [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_zone) |
 | [azurerm_image](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/image) |
 | [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault) |
 | [azurerm_key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault_access_policy) |
@@ -85,6 +91,7 @@ terraform apply -var-file azure.tfvars
 | [azurerm_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/virtual_network) |
 | [local_file](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) |
 | [null_resource](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) |
+| [random_string](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) |
 | [tls_private_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) |
 
 ## Inputs
@@ -93,7 +100,7 @@ terraform apply -var-file azure.tfvars
 |------|-------------|------|---------|:--------:|
 | allowed\_ssh\_cidrs | The list of CIDRs from which ssh is allowed. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | app\_gateway\_subnet\_cidr | The CIDR of the subnet created for the Application Gateway instance. | `string` | `"10.0.2.0/24"` | no |
-| ca\_certs | A group of certificate objects to download locally. This helps when using Let's Encrypt staging environment. | <pre>map(object({<br>    filename = string<br>    pemurl   = string<br>  }))</pre> | <pre>{<br>  "fakeleintermediatex1": {<br>    "filename": "fakeleintermediatex1.pem",<br>    "pemurl": "https://letsencrypt.org/certs/fakeleintermediatex1.pem"<br>  },<br>  "fakelerootx1": {<br>    "filename": "fakelerootx1.pem",<br>    "pemurl": "https://letsencrypt.org/certs/fakelerootx1.pem"<br>  }<br>}</pre> | no |
+| ca\_certs | A group of certificate objects to download locally. This helps when using Let's Encrypt staging environment. | <pre>map(object({<br>    filename = string<br>    pemurl   = string<br>  }))</pre> | <pre>{<br>  "fakeleintermediatex1": {<br>    "filename": "letsencrypt-stg-root-x1.pem",<br>    "pemurl": "https://letsencrypt.org/certs/staging/letsencrypt-stg-root-x1.pem"<br>  },<br>  "fakelerootx1": {<br>    "filename": "letsencrypt-stg-int-r3.pem",<br>    "pemurl": "https://letsencrypt.org/certs/staging/letsencrypt-stg-int-r3.pem"<br>  }<br>}</pre> | no |
 | client\_id | The Azure Service Principal Client ID which should be used. | `string` | n/a | yes |
 | client\_secret | The Azure Service Principal Client Secret which should be used. | `string` | n/a | yes |
 | control\_plane\_disk\_size | The size of control plane instances disk. | `string` | `"40"` | no |
@@ -138,9 +145,12 @@ terraform apply -var-file azure.tfvars
 | resource\_group\_name | n/a |
 | subscription\_id | n/a |
 | tenant\_id | n/a |
+| vault\_client\_id | n/a |
+| vault\_client\_secret | n/a |
 | vault\_resource\_name | n/a |
 | worker\_plane\_role\_name | n/a |
 | worker\_plane\_service\_principal\_ids | n/a |
 | workload\_backend | n/a |
 | workload\_tfvars | n/a |
+| zzz\_vault\_ad\_app | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
