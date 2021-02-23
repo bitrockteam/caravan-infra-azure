@@ -26,6 +26,7 @@ locals {
   ag_probe_nomad       = "${var.prefix}-probe-nomad"
   ag_probe_ingress     = "${var.prefix}-probe-ingress"
   ag_ssl_cert_name     = "${var.prefix}-ssl-cert"
+  ag_private_ip        = "10.0.2.100"
 
   // FIXME: We cannot use a * listener to address traffic to Consul Ingress due to a missing feature in Application Gateway
   // FIXME: We are not able to control the ordering of listeners in the AppGw, and as a result if * listener has
@@ -121,7 +122,7 @@ resource "azurerm_application_gateway" "this" {
     name                          = local.ag_fi_private
     private_ip_address_allocation = "Static"
     subnet_id                     = azurerm_subnet.app_gateway.id
-    private_ip_address            = "10.0.2.100"
+    private_ip_address            = local.ag_private_ip
   }
 
   frontend_port {
