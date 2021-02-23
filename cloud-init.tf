@@ -16,7 +16,7 @@ module "cloud_init_control_plane" {
 module "cloud_init_worker_plane" {
   source          = "git::ssh://git@github.com/bitrockteam/caravan-cloudinit?ref=main"
   cluster_nodes   = { for n in azurerm_linux_virtual_machine.control_plane : n.name => n.private_ip_address }
-  vault_endpoint  = "http://${azurerm_linux_virtual_machine.control_plane[0].private_ip_address}:8200"
+  vault_endpoint  = "http://vault-internal.${var.prefix}.${var.external_domain}"
   dc_name         = var.dc_name
   auto_auth_type  = "azure"
   azure_node_role = local.worker_plane_role_name

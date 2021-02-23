@@ -135,6 +135,8 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
 }
 
 resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
+  depends_on = [azurerm_application_gateway.this]
+
   admin_username = "centos"
   admin_ssh_key {
     public_key = tls_private_key.ssh_key.public_key_openssh
@@ -180,7 +182,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
 }
 
 resource "azurerm_linux_virtual_machine" "monitoring" {
-  count = var.enable_monitoring ? 1 : 0
+  depends_on = [azurerm_application_gateway.this]
+  count      = var.enable_monitoring ? 1 : 0
 
   admin_username = "centos"
   admin_ssh_key {
