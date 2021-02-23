@@ -1,29 +1,31 @@
 locals {
-  ag_bp_control_plane = "${var.prefix}-backend-pool-control-plane"
-  ag_bp_worker_plane  = "${var.prefix}-backend-pool-worker-plane"
-  ag_bhs              = "${var.prefix}-backend"
-  ag_bhs_vault        = "${local.ag_bhs}-vault"
-  ag_bhs_consul       = "${local.ag_bhs}-consul"
-  ag_bhs_nomad        = "${local.ag_bhs}-nomad"
-  ag_bhs_ingress      = "${local.ag_bhs}-ingress"
-  ag_fi_public        = "${var.prefix}-frontend-ip-public"
-  ag_fi_private       = "${var.prefix}-frontend-ip-private"
-  ag_fp_http          = "${var.prefix}-port-http"
-  ag_fp_https         = "${var.prefix}-port-https"
-  ag_gateway_ip       = "${var.prefix}-app-gateway-ip-config"
-  ag_hl               = "${var.prefix}-listener-http"
-  ag_hl_s             = "${var.prefix}-listener-https"
-  ag_hl_ingress       = "${local.ag_hl}-ingress"
-  ag_hl_s_ingress     = "${local.ag_hl_s}-ingress"
-  ag_rrr              = "${var.prefix}-http-routing"
-  ag_rrr_ingress      = "${local.ag_rrr}-ingress"
-  ag_rrr_s            = "${var.prefix}-https-routing"
-  ag_rrr_s_ingress    = "${local.ag_rrr_s}-ingress"
-  ag_probe_vault      = "${var.prefix}-probe-vault"
-  ag_probe_consul     = "${var.prefix}-probe-consul"
-  ag_probe_nomad      = "${var.prefix}-probe-nomad"
-  ag_probe_ingress    = "${var.prefix}-probe-ingress"
-  ag_ssl_cert_name    = "${var.prefix}-ssl-cert"
+  ag_bp_control_plane  = "${var.prefix}-backend-pool-control-plane"
+  ag_bp_worker_plane   = "${var.prefix}-backend-pool-worker-plane"
+  ag_bhs               = "${var.prefix}-backend"
+  ag_bhs_vault         = "${local.ag_bhs}-vault"
+  ag_bhs_consul        = "${local.ag_bhs}-consul"
+  ag_bhs_nomad         = "${local.ag_bhs}-nomad"
+  ag_bhs_ingress       = "${local.ag_bhs}-ingress"
+  ag_fi_public         = "${var.prefix}-frontend-ip-public"
+  ag_fi_private        = "${var.prefix}-frontend-ip-private"
+  ag_fp_http           = "${var.prefix}-port-http"
+  ag_fp_https          = "${var.prefix}-port-https"
+  ag_fp_http_internal  = "${var.prefix}-port-http-internal"
+  ag_fp_https_internal = "${var.prefix}-port-https-internal"
+  ag_gateway_ip        = "${var.prefix}-app-gateway-ip-config"
+  ag_hl                = "${var.prefix}-listener-http"
+  ag_hl_s              = "${var.prefix}-listener-https"
+  ag_hl_ingress        = "${local.ag_hl}-ingress"
+  ag_hl_s_ingress      = "${local.ag_hl_s}-ingress"
+  ag_rrr               = "${var.prefix}-http-routing"
+  ag_rrr_ingress       = "${local.ag_rrr}-ingress"
+  ag_rrr_s             = "${var.prefix}-https-routing"
+  ag_rrr_s_ingress     = "${local.ag_rrr_s}-ingress"
+  ag_probe_vault       = "${var.prefix}-probe-vault"
+  ag_probe_consul      = "${var.prefix}-probe-consul"
+  ag_probe_nomad       = "${var.prefix}-probe-nomad"
+  ag_probe_ingress     = "${var.prefix}-probe-ingress"
+  ag_ssl_cert_name     = "${var.prefix}-ssl-cert"
 
   // FIXME: We cannot use a * listener to address traffic to Consul Ingress due to a missing feature in Application Gateway
   // FIXME: We are not able to control the ordering of listeners in the AppGw, and as a result if * listener has
@@ -130,6 +132,14 @@ resource "azurerm_application_gateway" "this" {
     name = local.ag_fp_https
     port = 443
   }
+  frontend_port {
+    name = local.ag_fp_http_internal
+    port = 8080
+  }
+  frontend_port {
+    name = local.ag_fp_https_internal
+    port = 8443
+  }
 
   gateway_ip_configuration {
     name      = local.ag_gateway_ip
@@ -153,7 +163,7 @@ resource "azurerm_application_gateway" "this" {
     iterator = app
     content {
       frontend_ip_configuration_name = local.ag_fi_private
-      frontend_port_name             = local.ag_fp_http
+      frontend_port_name             = local.ag_fp_http_internal
       protocol                       = "Http"
       name                           = "${local.ag_hl}-internal-${app.key}"
       host_name                      = "${app.key}-internal.${var.prefix}.${var.external_domain}"
@@ -190,7 +200,7 @@ resource "azurerm_application_gateway" "this" {
     iterator = app
     content {
       frontend_ip_configuration_name = local.ag_fi_private
-      frontend_port_name             = local.ag_fp_https
+      frontend_port_name             = local.ag_fp_https_internal
       protocol                       = "Https"
       name                           = "${local.ag_hl_s}-internal-${app.key}"
       host_name                      = "${app.key}-internal.${var.prefix}.${var.external_domain}"
