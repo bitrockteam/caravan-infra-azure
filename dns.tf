@@ -29,3 +29,15 @@ resource "azurerm_dns_a_record" "star" {
 
   tags = var.tags
 }
+
+resource "azurerm_dns_a_record" "control_plane_internal" {
+  for_each = local.ag_control_plane_apps
+
+  name                = "${each.key}-internal"
+  records             = [local.ag_private_ip]
+  resource_group_name = var.resource_group_name
+  ttl                 = 30
+  zone_name           = azurerm_dns_zone.this.name
+
+  tags = var.tags
+}

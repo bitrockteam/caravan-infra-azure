@@ -56,8 +56,8 @@ terraform apply -var-file azure.tfvars
 
 | Name |
 |------|
-| [azuread_application](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application) |
 | [azuread_application_password](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_password) |
+| [azuread_application](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application) |
 | [azuread_client_config](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/client_config) |
 | [azuread_service_principal](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal) |
 | [azurerm_application_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/application_gateway) |
@@ -68,15 +68,15 @@ terraform apply -var-file azure.tfvars
 | [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/dns_zone) |
 | [azurerm_dns_zone](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/dns_zone) |
 | [azurerm_image](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/image) |
-| [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault) |
 | [azurerm_key_vault_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault_access_policy) |
 | [azurerm_key_vault_key](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault_key) |
-| [azurerm_linux_virtual_machine](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/linux_virtual_machine) |
+| [azurerm_key_vault](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/key_vault) |
 | [azurerm_linux_virtual_machine_scale_set](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/linux_virtual_machine_scale_set) |
+| [azurerm_linux_virtual_machine](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/linux_virtual_machine) |
 | [azurerm_managed_disk](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/managed_disk) |
-| [azurerm_network_interface](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/network_interface) |
 | [azurerm_network_interface_application_gateway_backend_address_pool_association](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/network_interface_application_gateway_backend_address_pool_association) |
 | [azurerm_network_interface_application_security_group_association](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/network_interface_application_security_group_association) |
+| [azurerm_network_interface](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/network_interface) |
 | [azurerm_network_security_group](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/network_security_group) |
 | [azurerm_network_security_rule](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/network_security_rule) |
 | [azurerm_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/public_ip) |
@@ -84,8 +84,8 @@ terraform apply -var-file azure.tfvars
 | [azurerm_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/role_assignment) |
 | [azurerm_role_definition](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/role_definition) |
 | [azurerm_storage_account](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/storage_account) |
-| [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/subnet) |
 | [azurerm_subnet_network_security_group_association](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/subnet_network_security_group_association) |
+| [azurerm_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/subnet) |
 | [azurerm_subscription](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/data-sources/subscription) |
 | [azurerm_user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/user_assigned_identity) |
 | [azurerm_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/2.46.1/docs/resources/virtual_network) |
