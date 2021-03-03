@@ -1,5 +1,7 @@
 # Caravan Infra Azure
 
+![Caravan 2021 Azure](https://user-images.githubusercontent.com/5972762/109784968-e72e7c80-7c0b-11eb-8423-47cf0b0f7262.png)
+
 ## Setup
 
 ```shell
