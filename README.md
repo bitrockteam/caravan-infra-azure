@@ -1,6 +1,6 @@
 # Caravan Infra Azure
 
-![Caravan 2021 Azure](https://user-images.githubusercontent.com/5972762/109784968-e72e7c80-7c0b-11eb-8423-47cf0b0f7262.png)
+![Caravan 2021 Azure](https://lucid.app/publicSegments/view/8e3cc368-8aa8-4f42-b96e-f7b529442c94/image.png)
 
 ## Setup
 
