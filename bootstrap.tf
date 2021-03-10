@@ -29,4 +29,9 @@ module "caravan_bootstrap" {
   azure_key_name   = azurerm_key_vault_key.key.name
   azure_resource   = var.vault_auth_resource
   azure_node_role  = local.control_plane_role_name
+
+  // Example: adding licenses
+  // consul_license = file("${path.module}/consul.hclic")
+  // vault_license = file("${path.module}/vault.hclic")
+  // nomad_license = file("${path.module}/nomad.hclic")
 }
