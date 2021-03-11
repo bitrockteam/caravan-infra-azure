@@ -177,3 +177,4 @@ files/echo-server
 state.json
 run.sh
 destroy.sh
+*.hclic
