@@ -31,7 +31,7 @@ terraform apply -var-file azure.tfvars
 
 | Name | Version |
 |------|---------|
-| terraform | ~> 0.13.1 |
+| terraform | ~> 0.14.7 |
 | azurerm | ~> 2.46.1 |
 
 ## Providers

@@ -20,6 +20,7 @@ module "caravan_bootstrap" {
   prefix                         = var.prefix
   vault_endpoint                 = "http://127.0.0.1:8200"
   control_plane_role_name        = local.control_plane_role_name
+  external_domain                = var.external_domain
 
   unseal_type          = "azure"
   agent_auto_auth_type = "azure"

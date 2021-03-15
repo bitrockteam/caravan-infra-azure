@@ -73,12 +73,3 @@ resource "local_file" "backend_tf_appsupport" {
   filename = "${path.module}/../caravan-application-support/${var.prefix}-azure-backend.tf.bak"
   content  = local.backend_tf_appsupport
 }
-
-resource "local_file" "tfvars_workload" {
-  filename = "${path.module}/../caravan-workload/${var.prefix}-azure.tfvars"
-  content  = local.tfvars_workload
-}
-resource "local_file" "backend_tf_workload" {
-  filename = "${path.module}/../caravan-workload/${var.prefix}-azure-backend.tf.bak"
-  content  = local.backend_tf_workload
-}
