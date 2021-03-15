@@ -9,7 +9,7 @@ provider "acme" {
 
 module "terraform_acme_le" {
   depends_on            = [azurerm_dns_ns_record.this]
-  source                = "git::ssh://git@github.com/bitrockteam/caravan-acme-le?ref=main"
+  source                = "git::ssh://git@github.com/bitrockteam/caravan-acme-le?ref=refs/tags/v0.0.1"
   common_name           = "${var.prefix}.${var.external_domain}"
   dns_provider          = "azure"
   private_key           = tls_private_key.cert_private_key.private_key_pem
