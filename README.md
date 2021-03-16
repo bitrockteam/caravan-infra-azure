@@ -32,14 +32,14 @@ terraform apply -var-file azure.tfvars
 | Name | Version |
 |------|---------|
 | terraform | ~> 0.14.7 |
-| azurerm | ~> 2.46.1 |
+| azurerm | ~> 2.46 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | azuread | n/a |
-| azurerm | ~> 2.46.1 |
+| azurerm | ~> 2.46 |
 | local | n/a |
 | null | n/a |
 | random | n/a |
@@ -105,6 +105,7 @@ terraform apply -var-file azure.tfvars
 | ca\_certs | A group of certificate objects to download locally. This helps when using Let's Encrypt staging environment. | <pre>map(object({<br>    filename = string<br>    pemurl   = string<br>  }))</pre> | <pre>{<br>  "fakeleintermediatex1": {<br>    "filename": "letsencrypt-stg-root-x1.pem",<br>    "pemurl": "https://letsencrypt.org/certs/staging/letsencrypt-stg-root-x1.pem"<br>  },<br>  "fakelerootx1": {<br>    "filename": "letsencrypt-stg-int-r3.pem",<br>    "pemurl": "https://letsencrypt.org/certs/staging/letsencrypt-stg-int-r3.pem"<br>  }<br>}</pre> | no |
 | client\_id | The Azure Service Principal Client ID which should be used. | `string` | n/a | yes |
 | client\_secret | The Azure Service Principal Client Secret which should be used. | `string` | n/a | yes |
+| consul\_license\_file | Path to Consul Enterprise license | `string` | `null` | no |
 | control\_plane\_disk\_size | The size of control plane instances disk. | `string` | `"40"` | no |
 | control\_plane\_instance\_count | The number of control plane instances. | `number` | `3` | no |
 | control\_plane\_size | The size of control plane instances. | `string` | `"Standard_B2s"` | no |
@@ -117,6 +118,7 @@ terraform apply -var-file azure.tfvars
 | location | The Azure location where to create resources. | `string` | n/a | yes |
 | monitoring\_disk\_size | The size of monitoring instance disk. | `string` | `"40"` | no |
 | monitoring\_size | The size of monitoring instance. | `string` | `"Standard_B2s"` | no |
+| nomad\_license\_file | Path to Nomad Enterprise license | `string` | `null` | no |
 | parent\_resource\_group\_name | The Azure Resource Group name where a dns zone exists for external\_domain. | `string` | n/a | yes |
 | prefix | A string prefix prepended to resource names. | `string` | n/a | yes |
 | resource\_group\_name | The Azure Resource Group name in which the objects will be created. | `string` | n/a | yes |
@@ -127,6 +129,7 @@ terraform apply -var-file azure.tfvars
 | tenant\_id | The Azure Tenant ID which should be used. | `string` | n/a | yes |
 | use\_le\_staging | Whether to use Let's Encrypt staging endpoint. | `bool` | n/a | yes |
 | vault\_auth\_resource | The Azure AD application to use for generating access tokens. | `string` | `"https://management.azure.com/"` | no |
+| vault\_license\_file | Path to Vault Enterprise license | `string` | `null` | no |
 | vnet\_cidrs | The CIDR of the created Virtual Network. | `list(string)` | <pre>[<br>  "10.0.0.0/16"<br>]</pre> | no |
 | worker\_plane\_disk\_size | The size of worker plane instances disk. | `string` | `"40"` | no |
 | worker\_plane\_instance\_count | The number of worker plane instances. | `number` | `3` | no |
