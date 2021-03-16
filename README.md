@@ -32,14 +32,14 @@ terraform apply -var-file azure.tfvars
 | Name | Version |
 |------|---------|
 | terraform | ~> 0.14.7 |
-| azurerm | ~> 2.46.1 |
+| azurerm | ~> 2.46 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | azuread | n/a |
-| azurerm | ~> 2.46.1 |
+| azurerm | ~> 2.46 |
 | local | n/a |
 | null | n/a |
 | random | n/a |

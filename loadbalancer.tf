@@ -39,7 +39,7 @@ locals {
     "jenkins",
     "jaeger",
     "faasd-gateway",
-    "grafana-internal",
+    "grafana",
     "kibana",
     "prometheus",
     "keycloak",
