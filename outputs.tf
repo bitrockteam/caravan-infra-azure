@@ -70,7 +70,8 @@ output "vault_client_id" {
 }
 
 output "vault_client_secret" {
-  value = azuread_application_password.vault.value
+  value     = azuread_application_password.vault.value
+  sensitive = true
 }
 
 output "zzz_vault_ad_app" {
