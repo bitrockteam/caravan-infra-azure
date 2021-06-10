@@ -49,10 +49,10 @@ terraform apply -var-file azure.tfvars
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_caravan_bootstrap"></a> [caravan\_bootstrap](#module\_caravan\_bootstrap) | git::ssh://git@github.com/bitrockteam/caravan-bootstrap | refs/tags/v0.2.5 |
-| <a name="module_cloud_init_control_plane"></a> [cloud\_init\_control\_plane](#module\_cloud\_init\_control\_plane) | git::ssh://git@github.com/bitrockteam/caravan-cloudinit | refs/tags/v0.1.4 |
-| <a name="module_cloud_init_worker_plane"></a> [cloud\_init\_worker\_plane](#module\_cloud\_init\_worker\_plane) | git::ssh://git@github.com/bitrockteam/caravan-cloudinit | refs/tags/v0.1.4 |
-| <a name="module_terraform_acme_le"></a> [terraform\_acme\_le](#module\_terraform\_acme\_le) | git::ssh://git@github.com/bitrockteam/caravan-acme-le | refs/tags/v0.0.1 |
+| <a name="module_caravan_bootstrap"></a> [caravan\_bootstrap](#module\_caravan\_bootstrap) | git::https://github.com/bitrockteam/caravan-bootstrap | refs/tags/v0.2.6 |
+| <a name="module_cloud_init_control_plane"></a> [cloud\_init\_control\_plane](#module\_cloud\_init\_control\_plane) | git::https://github.com/bitrockteam/caravan-cloudinit | refs/tags/v0.1.4 |
+| <a name="module_cloud_init_worker_plane"></a> [cloud\_init\_worker\_plane](#module\_cloud\_init\_worker\_plane) | git::https://github.com/bitrockteam/caravan-cloudinit | refs/tags/v0.1.4 |
+| <a name="module_terraform_acme_le"></a> [terraform\_acme\_le](#module\_terraform\_acme\_le) | git::https://github.com/bitrockteam/caravan-acme-le | refs/tags/v0.0.1 |
 
 ## Resources
 
