@@ -8,7 +8,7 @@ module "caravan_bootstrap" {
     azurerm_key_vault_key.key
   ]
 
-  source                         = "git::https://github.com/bitrockteam/caravan-bootstrap?ref=refs/tags/v0.2.6"
+  source                         = "git::https://github.com/bitrockteam/caravan-bootstrap?ref=refs/tags/v0.2.8"
   ssh_private_key                = chomp(tls_private_key.ssh_key.private_key_pem)
   ssh_user                       = "centos"
   ssh_timeout                    = "240s"

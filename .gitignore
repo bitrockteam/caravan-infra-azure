@@ -178,3 +178,4 @@ state.json
 run.sh
 destroy.sh
 *.hclic
+.*-encryption*
