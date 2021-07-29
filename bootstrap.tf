@@ -4,7 +4,7 @@ module "caravan_bootstrap" {
   ssh_private_key                = chomp(tls_private_key.ssh_key.private_key_pem)
   ssh_user                       = "centos"
   ssh_timeout                    = "240s"
-  control_plane_nodes_ids        = [for n in azurerm_linux_virtual_machine.control_plane : n.name]
+  control_plane_nodes_ids        = [for n in azurerm_linux_virtual_machine.control_plane : n.virtual_machine_id]
   control_plane_nodes            = { for n in azurerm_linux_virtual_machine.control_plane : n.name => n.private_ip_address }
   control_plane_nodes_public_ips = { for n in azurerm_linux_virtual_machine.control_plane : n.name => n.public_ip_address }
   tcp_listener_tls               = false
