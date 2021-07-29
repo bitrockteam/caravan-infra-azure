@@ -14,7 +14,8 @@ locals {
 }
 
 resource "azurerm_public_ip" "control_plane" {
-  count               = var.control_plane_instance_count
+  count = var.control_plane_instance_count
+
   name                = "${var.prefix}-control-plane-ip-${count.index}"
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -24,7 +25,8 @@ resource "azurerm_public_ip" "control_plane" {
 }
 
 resource "azurerm_network_interface" "control_plane" {
-  count               = var.control_plane_instance_count
+  count = var.control_plane_instance_count
+
   name                = "${var.prefix}-control-plane-${count.index}"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -68,7 +70,8 @@ resource "azurerm_network_interface" "monitoring" {
 }
 
 resource "azurerm_network_interface_application_security_group_association" "control_plane" {
-  count                         = var.control_plane_instance_count
+  count = var.control_plane_instance_count
+
   application_security_group_id = azurerm_application_security_group.control_plane.id
   network_interface_id          = azurerm_network_interface.control_plane[count.index].id
 }
@@ -83,13 +86,15 @@ resource "azurerm_network_interface_application_gateway_backend_address_pool_ass
 }
 
 resource "azurerm_network_interface_application_security_group_association" "monitoring" {
-  count                         = var.enable_monitoring ? 1 : 0
+  count = var.enable_monitoring ? 1 : 0
+
   application_security_group_id = azurerm_application_security_group.worker_plane.id
   network_interface_id          = azurerm_network_interface.monitoring[count.index].id
 }
 
 resource "azurerm_network_interface_application_security_group_association" "monitoring_2" {
-  count                         = var.enable_monitoring ? 1 : 0
+  count = var.enable_monitoring ? 1 : 0
+
   application_security_group_id = azurerm_application_security_group.monitoring.id
   network_interface_id          = azurerm_network_interface.monitoring[count.index].id
 }
@@ -121,8 +126,8 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
 
   os_disk {
     caching              = "None"
-    storage_account_type = "Standard_LRS"
-    disk_size_gb         = var.control_plane_disk_size
+    storage_account_type = var.control_plane_disk_root_type
+    disk_size_gb         = var.control_plane_disk_root_size
   }
 
   source_image_id = data.azurerm_image.caravan.id
@@ -131,7 +136,75 @@ resource "azurerm_linux_virtual_machine" "control_plane" {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.control_plane.id]
   }
+
   tags = var.tags
+}
+
+resource "azurerm_managed_disk" "vault_data" {
+  count = var.control_plane_instance_count
+
+  name                 = format("vault-data-%.2d", count.index + 1)
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  storage_account_type = var.control_plane_disk_data_type
+  create_option        = "Empty"
+  disk_size_gb         = var.control_plane_disk_data_size
+
+  tags = var.tags
+}
+resource "azurerm_virtual_machine_data_disk_attachment" "vault_data" {
+  count = var.control_plane_instance_count
+
+  managed_disk_id    = azurerm_managed_disk.vault_data[count.index].id
+  virtual_machine_id = azurerm_linux_virtual_machine.control_plane[count.index].id
+
+  lun     = "10"
+  caching = "None"
+}
+
+resource "azurerm_managed_disk" "consul_data" {
+  count = var.control_plane_instance_count
+
+  name                 = format("consul-data-%.2d", count.index + 1)
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  storage_account_type = var.control_plane_disk_data_type
+  create_option        = "Empty"
+  disk_size_gb         = var.control_plane_disk_data_size
+
+  tags = var.tags
+}
+resource "azurerm_virtual_machine_data_disk_attachment" "consul_data" {
+  count = var.control_plane_instance_count
+
+  managed_disk_id    = azurerm_managed_disk.consul_data[count.index].id
+  virtual_machine_id = azurerm_linux_virtual_machine.control_plane[count.index].id
+
+  lun     = "11"
+  caching = "None"
+}
+
+resource "azurerm_managed_disk" "nomad_data" {
+  count = var.control_plane_instance_count
+
+  name                 = format("nomad-data-%.2d", count.index + 1)
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  storage_account_type = var.control_plane_disk_data_type
+  create_option        = "Empty"
+  disk_size_gb         = var.control_plane_disk_data_size
+
+  tags = var.tags
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "nomad_data" {
+  count = var.control_plane_instance_count
+
+  managed_disk_id    = azurerm_managed_disk.nomad_data[count.index].id
+  virtual_machine_id = azurerm_linux_virtual_machine.control_plane[count.index].id
+
+  lun     = "12"
+  caching = "None"
 }
 
 resource "azurerm_linux_virtual_machine_scale_set" "worker_plane" {
