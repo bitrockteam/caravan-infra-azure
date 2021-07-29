@@ -1,14 +1,17 @@
 resource "azurerm_key_vault" "key_vault" {
-  location               = var.location
-  name                   = "${var.prefix}-keyvault"
-  resource_group_name    = var.resource_group_name
-  sku_name               = "standard"
-  tenant_id              = data.azurerm_client_config.this.tenant_id
-  tags                   = var.tags
-  enabled_for_deployment = true
+  location                    = var.location
+  name                        = "${var.prefix}-keyvault"
+  resource_group_name         = var.resource_group_name
+  sku_name                    = "standard"
+  tenant_id                   = data.azurerm_client_config.this.tenant_id
+  tags                        = var.tags
+  enabled_for_deployment      = true
+  enabled_for_disk_encryption = true
+  soft_delete_retention_days  = 15
+  purge_protection_enabled    = true
 
   network_acls {
-    default_action = "Allow"
+    default_action = "Allow" #tfsec:ignore:AZU020
     bypass         = "AzureServices"
   }
 }
@@ -44,6 +47,8 @@ resource "azurerm_key_vault_access_policy" "control_plane" {
   ]
 }
 
+# TODO? https://docs.microsoft.com/en-us/azure/key-vault/secrets/tutorial-rotation-dual?tabs=azure-cli
+# tfsec:ignore:AZU026
 resource "azurerm_key_vault_key" "key" {
   depends_on = [azurerm_key_vault_access_policy.self]
 

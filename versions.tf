@@ -3,8 +3,13 @@ terraform {
     acme = {
       source = "vancluever/acme"
     }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 1.0"
+    }
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
+      version = "~> 2.0"
     }
     local = {
       source = "hashicorp/local"

@@ -1,14 +1,6 @@
 module "caravan_bootstrap" {
-  depends_on = [
-    azurerm_linux_virtual_machine.control_plane,
-    azurerm_network_interface.control_plane,
-    azurerm_network_interface_application_security_group_association.control_plane,
-    azurerm_network_security_group.default,
-    azurerm_key_vault_access_policy.control_plane,
-    azurerm_key_vault_key.key
-  ]
+  source = "git::https://github.com/bitrockteam/caravan-bootstrap?ref=refs/tags/v0.2.13"
 
-  source                         = "git::https://github.com/bitrockteam/caravan-bootstrap?ref=refs/tags/v0.2.8"
   ssh_private_key                = chomp(tls_private_key.ssh_key.private_key_pem)
   ssh_user                       = "centos"
   ssh_timeout                    = "240s"
@@ -34,4 +26,16 @@ module "caravan_bootstrap" {
   consul_license = var.consul_license_file != null ? file(var.consul_license_file) : ""
   vault_license  = var.vault_license_file != null ? file(var.vault_license_file) : ""
   nomad_license  = var.nomad_license_file != null ? file(var.nomad_license_file) : ""
+
+  depends_on = [
+    azurerm_linux_virtual_machine.control_plane,
+    azurerm_network_interface.control_plane,
+    azurerm_network_interface_application_security_group_association.control_plane,
+    azurerm_network_security_group.default,
+    azurerm_key_vault_access_policy.control_plane,
+    azurerm_key_vault_key.key,
+    azurerm_virtual_machine_data_disk_attachment.vault_data,
+    azurerm_virtual_machine_data_disk_attachment.consul_data,
+    azurerm_virtual_machine_data_disk_attachment.nomad_data
+  ]
 }

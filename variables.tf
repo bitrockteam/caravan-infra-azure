@@ -79,10 +79,29 @@ variable "control_plane_size" {
   default     = "Standard_B2s"
   description = "The size of control plane instances."
 }
-variable "control_plane_disk_size" {
+
+variable "control_plane_disk_root_size" {
+  type        = number
+  default     = 20
+  description = "The size of control plane instances root disk."
+}
+
+variable "control_plane_disk_root_type" {
   type        = string
-  default     = "40"
-  description = "The size of control plane instances disk."
+  default     = "Standard_LRS"
+  description = "The type of control plane instances root disk."
+}
+
+variable "control_plane_disk_data_size" {
+  type        = number
+  default     = 20
+  description = "The size of control plane instances data disk."
+}
+
+variable "control_plane_disk_data_type" {
+  type        = string
+  default     = "Standard_LRS"
+  description = "The type of control plane instances data disk."
 }
 
 // Worker plane
