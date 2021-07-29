@@ -82,7 +82,7 @@ variable "control_plane_size" {
 
 variable "control_plane_disk_root_size" {
   type        = number
-  default     = 20
+  default     = 30
   description = "The size of control plane instances root disk."
 }
 

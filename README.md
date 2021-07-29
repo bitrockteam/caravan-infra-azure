@@ -159,7 +159,7 @@ terraform apply -var-file azure.tfvars
 | <a name="input_consul_license_file"></a> [consul\_license\_file](#input\_consul\_license\_file) | Path to Consul Enterprise license | `string` | `null` | no |
 | <a name="input_control_plane_disk_data_size"></a> [control\_plane\_disk\_data\_size](#input\_control\_plane\_disk\_data\_size) | The size of control plane instances data disk. | `number` | `20` | no |
 | <a name="input_control_plane_disk_data_type"></a> [control\_plane\_disk\_data\_type](#input\_control\_plane\_disk\_data\_type) | The type of control plane instances data disk. | `string` | `"Standard_LRS"` | no |
-| <a name="input_control_plane_disk_root_size"></a> [control\_plane\_disk\_root\_size](#input\_control\_plane\_disk\_root\_size) | The size of control plane instances root disk. | `number` | `20` | no |
+| <a name="input_control_plane_disk_root_size"></a> [control\_plane\_disk\_root\_size](#input\_control\_plane\_disk\_root\_size) | The size of control plane instances root disk. | `number` | `30` | no |
 | <a name="input_control_plane_disk_root_type"></a> [control\_plane\_disk\_root\_type](#input\_control\_plane\_disk\_root\_type) | The type of control plane instances root disk. | `string` | `"Standard_LRS"` | no |
 | <a name="input_control_plane_instance_count"></a> [control\_plane\_instance\_count](#input\_control\_plane\_instance\_count) | The number of control plane instances. | `number` | `3` | no |
 | <a name="input_control_plane_size"></a> [control\_plane\_size](#input\_control\_plane\_size) | The size of control plane instances. | `string` | `"Standard_B2s"` | no |
