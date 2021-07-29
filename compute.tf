@@ -149,6 +149,8 @@ resource "azurerm_managed_disk" "vault_data" {
   storage_account_type = var.control_plane_disk_data_type
   create_option        = "Empty"
   disk_size_gb         = var.control_plane_disk_data_size
+
+  tags = var.tags
 }
 resource "azurerm_virtual_machine_data_disk_attachment" "vault_data" {
   count = var.control_plane_instance_count
@@ -169,6 +171,8 @@ resource "azurerm_managed_disk" "consul_data" {
   storage_account_type = var.control_plane_disk_data_type
   create_option        = "Empty"
   disk_size_gb         = var.control_plane_disk_data_size
+
+  tags = var.tags
 }
 resource "azurerm_virtual_machine_data_disk_attachment" "consul_data" {
   count = var.control_plane_instance_count
@@ -189,6 +193,8 @@ resource "azurerm_managed_disk" "nomad_data" {
   storage_account_type = var.control_plane_disk_data_type
   create_option        = "Empty"
   disk_size_gb         = var.control_plane_disk_data_size
+
+  tags = var.tags
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "nomad_data" {
