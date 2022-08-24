@@ -24,9 +24,11 @@ resource "azurerm_network_security_rule" "allow_in_ssh" {
   protocol                    = "Tcp"
   resource_group_name         = var.resource_group_name
   source_port_range           = "*"
-  source_address_prefixes     = var.allowed_ssh_cidrs # tfsec:ignore:AZU001
-  destination_port_range      = "22"
-  destination_address_prefix  = "*"
+  # tfsec:ignore:azure-network-no-public-ingress
+  # tfsec:ignore:azure-network-ssh-blocked-from-internet
+  source_address_prefixes    = var.allowed_ssh_cidrs
+  destination_port_range     = "22"
+  destination_address_prefix = "*"
 }
 
 resource "azurerm_network_security_rule" "allow_in_icmp" {
