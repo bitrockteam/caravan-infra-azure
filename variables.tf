@@ -134,7 +134,7 @@ variable "monitoring_disk_size" {
 }
 variable "monitoring_size" {
   type        = string
-  default     = "Standard_B2s"
+  default     = "Standard_B4ms"
   description = "The size of monitoring instance."
 }
 
@@ -170,7 +170,7 @@ variable "image_resource_group_name" {
 }
 variable "image_name_regex" {
   type        = string
-  default     = "caravan-centos-image-*"
+  default     = "caravan-os-centos-7-*"
   description = "The Azure Compute image name regex"
 }
 variable "vault_auth_resource" {

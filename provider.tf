@@ -4,6 +4,8 @@ provider "azurerm" {
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
+
+  # skip_provider_registration = true
 }
 /*
 // This requires running `az ad app permission grant --id "${var.client_id}" --api 00000002-0000-0000-c000-000000000000`

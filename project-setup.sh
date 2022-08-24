@@ -42,7 +42,9 @@ az ad app permission add --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-00000
 # Grant Directory.ReadWrite.All
 az ad app permission add --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000 --api-permissions 78c8a3c8-a07e-4b9e-af1b-b5ccab50a175=Role
 # Apply changes
-az ad app permission grant --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000
+az ad app permission grant --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000 --scope Application.ReadWrite.All
+az ad app permission grant --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000 --scope User.Read
+az ad app permission grant --id "${CLIENT_ID}" --api 00000002-0000-0000-c000-000000000000 --scope Directory.ReadWrite.All
 
 # Allow access for Terraform backend operations
 az role assignment create \

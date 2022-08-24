@@ -80,15 +80,19 @@ resource "azuread_application" "vault" {
     ]
     description  = "Admins can manage roles and perform all task actions"
     display_name = "Admin"
-    is_enabled   = true
+    enabled      = true
+    id           = "1b19509b-32b1-4e9f-b71d-4992aa991967"
     value        = "Admin"
   }
-  oauth2_permissions {
-    admin_consent_description  = "Administer the example application"
-    admin_consent_display_name = "Administer"
-    is_enabled                 = true
-    type                       = "Admin"
-    value                      = "administer"
+  api {
+    oauth2_permission_scope {
+      admin_consent_description  = "Administer the example application"
+      admin_consent_display_name = "Administer"
+      id                         = "be98fa3e-ab5b-4b11-83d9-04ba2b7946bc"
+      enabled                    = true
+      type                       = "Admin"
+      value                      = "administer"
+    }
   }
   owners = [
     data.azurerm_client_config.this.object_id,
@@ -97,7 +101,6 @@ resource "azuread_application" "vault" {
 }
 resource "azuread_application_password" "vault" {
   application_object_id = azuread_application.vault.object_id
-  value                 = random_string.vault_password.result
   end_date_relative     = "17520h"
 }
 resource "azuread_service_principal" "vault" {
@@ -108,6 +111,4 @@ resource "azurerm_role_assignment" "vault" {
   role_definition_id = data.azurerm_role_definition.owner.id
   scope              = data.azurerm_subscription.this.id
 }
-resource "random_string" "vault_password" {
-  length = 32
-}
+

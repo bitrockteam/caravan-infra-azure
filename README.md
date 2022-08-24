@@ -32,18 +32,17 @@ terraform apply -var-file azure.tfvars
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
-| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 1.0 |
+| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 2.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 2.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 1.6.0 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.27.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 2.99.0 |
 | <a name="provider_local"></a> [local](#provider\_local) | 2.2.3 |
 | <a name="provider_null"></a> [null](#provider\_null) | 3.1.1 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.3.2 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.1 |
 
 ## Modules
@@ -123,7 +122,6 @@ terraform apply -var-file azure.tfvars
 | [local_file.tfvars_platform](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
 | [null_resource.ca_certs](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.ca_certs_bundle](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [random_string.vault_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [tls_private_key.cert_private_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.ssh_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [azuread_client_config.this](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/client_config) | data source |
@@ -166,9 +164,9 @@ terraform apply -var-file azure.tfvars
 | <a name="input_csi_volumes"></a> [csi\_volumes](#input\_csi\_volumes) | Example:<br>{<br>  "jenkins" : {<br>    "storage\_account\_type" : "Standard\_LRS"<br>    "disk\_size\_gb" : "30"<br>  }<br>} | `map(map(string))` | `{}` | no |
 | <a name="input_dc_name"></a> [dc\_name](#input\_dc\_name) | The Consul DC name. | `string` | `"azure-dc"` | no |
 | <a name="input_enable_monitoring"></a> [enable\_monitoring](#input\_enable\_monitoring) | Whether to create an additional instance for monitoring purposes. | `bool` | `true` | no |
-| <a name="input_image_name_regex"></a> [image\_name\_regex](#input\_image\_name\_regex) | The Azure Compute image name regex | `string` | `"caravan-centos-image-*"` | no |
+| <a name="input_image_name_regex"></a> [image\_name\_regex](#input\_image\_name\_regex) | The Azure Compute image name regex | `string` | `"caravan-os-centos-7-*"` | no |
 | <a name="input_monitoring_disk_size"></a> [monitoring\_disk\_size](#input\_monitoring\_disk\_size) | The size of monitoring instance disk. | `string` | `"40"` | no |
-| <a name="input_monitoring_size"></a> [monitoring\_size](#input\_monitoring\_size) | The size of monitoring instance. | `string` | `"Standard_B2s"` | no |
+| <a name="input_monitoring_size"></a> [monitoring\_size](#input\_monitoring\_size) | The size of monitoring instance. | `string` | `"Standard_B4ms"` | no |
 | <a name="input_nomad_license_file"></a> [nomad\_license\_file](#input\_nomad\_license\_file) | Path to Nomad Enterprise license | `string` | `null` | no |
 | <a name="input_subnet_cidr"></a> [subnet\_cidr](#input\_subnet\_cidr) | The CIDR of the subnet created for Compute instances. | `string` | `"10.0.1.0/24"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A set of key-value tags applied to all resources created by Terraform. | `map(string)` | <pre>{<br>  "project": "caravan"<br>}</pre> | no |
